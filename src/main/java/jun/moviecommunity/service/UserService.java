@@ -42,9 +42,17 @@ public class UserService {
         }
 
         //중복 닉네임 검사
-        List<User> findUsersByNickname = userRepository.findByNickname(user.getNickname());
+        validateDuplicateNickname(user.getNickname());
+    }
+
+    /**
+     * 중복닉네임 확인
+     **/
+    private void validateDuplicateNickname(String nickname) {
+        //중복 닉네임 검사
+        List<User> findUsersByNickname = userRepository.findByNickname(nickname);
         if(!findUsersByNickname.isEmpty()){
-            throw new IllegalStateException("이미 사용중인 메일입니다.");
+            throw new IllegalStateException("이미 사용중인 닉네임입니다.");
         }
     }
 
@@ -68,6 +76,7 @@ public class UserService {
     @Transactional
     public User updateUser(Long userId, String password, String nickname){
         User user = userRepository.findOne(userId);
+        validateDuplicateNickname(nickname);
         user.change(password, nickname);
         return user;
     }

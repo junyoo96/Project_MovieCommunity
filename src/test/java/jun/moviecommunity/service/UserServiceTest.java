@@ -82,10 +82,10 @@ public class UserServiceTest {
     public void 중복_닉네임_예외() throws Exception {
         //given
         User user1 = new User();
-        user1.setNickname("myNickName");
+        user1.setNickname("myNickname");
 
         User user2 = new User();
-        user2.setNickname("myNickName");
+        user2.setNickname("myNickname");
 
         //when
         userService.join(user1);
@@ -102,13 +102,24 @@ public class UserServiceTest {
         Long saveId = userService.join(user);
 
         //when
-        userService.updateUser(saveId, "changedPassword", "changedNickname");
+        User updateUser = userService.updateUser(saveId, "newPassword", "newNickname");
 
         //then
-        User findUser = userService.findOne(saveId);
+        assertEquals("newPassword", updateUser.getPassword());
+        assertEquals("newNickname", updateUser.getNickname());
+    }
 
-        assertEquals("changedPassword", findUser.getPassword());
-        assertEquals("changedNickname", findUser.getNickname());
+    @Test(expected = IllegalStateException.class)
+    public void 회원수정_중복_닉네임_예외() throws Exception {
+        //given
+        User user = createUser();
+        Long saveId = userService.join(user);
+
+        //when
+        userService.updateUser(saveId, "newPassword", "myNickname");
+
+        //then
+        fail("위에서 예외가 발생해야 한다.");
     }
 
     @Test
@@ -134,7 +145,7 @@ public class UserServiceTest {
         User user = new User();
         user.setName("myId");
         user.setPassword("myPassword");
-        user.setNickname("myNickName");
+        user.setNickname("myNickname");
         user.setEmail("myEmail@gmail.com");
         user.setImagePath("myPath");
         user.setCreateDate(LocalDateTime.now());
