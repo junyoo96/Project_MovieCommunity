@@ -32,4 +32,8 @@ public class CommentRepository {
                 .setParameter("userId", userId)
                 .getResultList();
     }
+
+    public void delete(Long id) {
+        em.remove(findOne(id));
+    }
 }

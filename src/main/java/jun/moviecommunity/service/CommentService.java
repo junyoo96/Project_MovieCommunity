@@ -65,4 +65,14 @@ public class CommentService {
         return comment;
     }
 
+    /**
+     * 댓글 삭제
+    **/
+    @Transactional
+    public void deleteComment(Long commentId) {commentRepository.delete(commentId); }
+
+    /**
+     * 대댓글 등록
+    **/
+
 }
