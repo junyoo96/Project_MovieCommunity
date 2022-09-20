@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
@@ -18,5 +19,17 @@ public class CommentRepository {
 
     public Comment findOne(Long id) {
         return em.find(Comment.class, id);
+    }
+
+    public List<Comment> findAllByPostId(Long postId) {
+        return em.createQuery("select c from Comment c where c.post.id = :postId", Comment.class)
+                .setParameter("postId", postId)
+                .getResultList();
+    }
+
+    public List<Comment> findAllByUserId(Long userId) {
+        return em.createQuery("select c from Comment c where c.author.id = :userId", Comment.class)
+                .setParameter("userId", userId)
+                .getResultList();
     }
 }
