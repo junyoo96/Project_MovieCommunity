@@ -20,7 +20,7 @@ import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-//@Transactional
+@Transactional
 public class CommentServiceTest {
 
     @Autowired CommentService commentService;
@@ -127,6 +127,26 @@ public class CommentServiceTest {
 
         //then
         assertEquals("updatedComment", comment.getContent());
+    }
+
+    @Test
+    public void 댓글삭제() throws Exception {
+        //given
+        User user = createUser();
+        userService.join(user);
+
+        Long postId = postService.savePost(user.getId(), "newTitle", "newContent", Category.INTRODUCTION, createFileUrlPaths());
+        Post post = postService.findOne(postId);
+
+        Long commentId = commentService.saveComment(user.getId(), postId, "newComment");
+
+        //when
+        commentService.deleteComment(commentId);
+        Comment removedComment = commentService.findOne(commentId);
+
+        //then
+        Assertions.assertThat(removedComment).isNull();
+
     }
 
     private User createUser(){
