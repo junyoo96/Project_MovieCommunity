@@ -111,6 +111,24 @@ public class CommentServiceTest {
         assertEquals("newContent2", comments.get(0).getContent());
     }
 
+    @Test
+    public void 댓글수정() throws Exception {
+        //given
+        User user = createUser();
+        userService.join(user);
+
+        Long postId = postService.savePost(user.getId(), "newTitle", "newContent", Category.INTRODUCTION, createFileUrlPaths());
+        Post post = postService.findOne(postId);
+
+        Long commentId = commentService.saveComment(user.getId(), postId, "newComment");
+
+        //when
+        Comment comment = commentService.updateComment(commentId, "updatedComment");
+
+        //then
+        assertEquals("updatedComment", comment.getContent());
+    }
+
     private User createUser(){
         User user = new User();
         user.setName("myId");

@@ -55,4 +55,14 @@ public class CommentService {
         return commentRepository.findAllByUserId(userId);
     }
 
+    /**
+     * 댓글 수정
+    **/
+    @Transactional
+    public Comment updateComment(Long commentId, String content) {
+        Comment comment = commentRepository.findOne(commentId);
+        comment.change(content);
+        return comment;
+    }
+
 }
