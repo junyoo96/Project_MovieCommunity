@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -23,13 +25,34 @@ public class CommentService {
      * 댓글 등록
     **/
     @Transactional
-    public Long save(Long userId, Long postId, String content) {
+    public Long saveComment(Long userId, Long postId, String content) {
         User user = userRepository.findOne(userId);
         Post post = postRepository.findOne(postId);
 
         Comment comment = Comment.createComment(user, post, content);
         commentRepository.save(comment);
         return comment.getId();
+    }
+
+    /**
+     * 댓글 개별 조회
+     **/
+    public Comment findOne(Long commentId) {
+        return commentRepository.findOne(commentId);
+    }
+
+    /**
+     * 게시글별 댓글 조회
+    **/
+    public List<Comment> findCommentsByPostId(Long postId) {
+        return commentRepository.findAllByPostId(postId);
+    }
+
+    /**
+     * 유저별 댓글 조회
+    **/
+    public List<Comment> findCommentsByUserId(Long userId) {
+        return commentRepository.findAllByUserId(userId);
     }
 
 }
