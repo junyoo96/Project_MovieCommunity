@@ -38,4 +38,9 @@ public class Comment {
         comment.setUpdateDate(LocalDateTime.now());
         return comment;
     }
+
+    public void change(String content) {
+        this.setContent(content);
+        this.setUpdateDate(LocalDateTime.now());
+    }
 }
