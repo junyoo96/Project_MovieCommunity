@@ -28,4 +28,14 @@ public class Comment {
     private int reparent;
     private int redepth;
     private int reorder;
+
+    public static Comment createComment(User user, Post post, String content) {
+        Comment comment = new Comment();
+        comment.setAuthor(user);
+        comment.setPost(post);
+        comment.setContent(content);
+        comment.setCreateDate(LocalDateTime.now());
+        comment.setUpdateDate(LocalDateTime.now());
+        return comment;
+    }
 }
