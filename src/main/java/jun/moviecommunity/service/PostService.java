@@ -78,4 +78,11 @@ public class PostService {
     **/
     @Transactional
     public void deletePost(Long postId) { postRepository.delete(postId); }
+
+    /**
+     * 게시글 검색
+    **/
+    public List<Post> searchByTitle(String keyword) {
+        return postRepository.searchByTitle(keyword);
+    }
 }
