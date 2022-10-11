@@ -27,7 +27,7 @@ public class PostService {
     @Transactional
     public Long savePost(Long userId, String title, String content, Category category, List<String> fileUrlPaths){
         //엔티티 조회
-        User user = userRepository.findOne(userId);
+        User user = userRepository.findById(userId).get();
 
         //게시글 생성
         Post post = Post.createPost(user, title, content, category);
