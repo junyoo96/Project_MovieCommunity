@@ -3,7 +3,6 @@ package jun.moviecommunity.repository;
 import jun.moviecommunity.domain.Post;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-
 import javax.persistence.EntityManager;
 import java.util.List;
 
@@ -35,5 +34,10 @@ public class PostRepository {
         em.remove(findOne(id));
     }
 
+    public List<Post> searchByTitle(String keyword) {
+        return em.createQuery("select p from Post p where p.title like :keyword")
+                .setParameter("keyword", "%" + keyword + "%")
+                .getResultList();
+    }
 }
 
