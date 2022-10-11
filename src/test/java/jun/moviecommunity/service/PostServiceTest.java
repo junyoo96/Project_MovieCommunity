@@ -3,19 +3,16 @@ package jun.moviecommunity.service;
 import jun.moviecommunity.domain.*;
 import jun.moviecommunity.repository.FileRepository;
 import jun.moviecommunity.repository.PostRepository;
-import jun.moviecommunity.repository.UserRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -148,6 +145,22 @@ public class PostServiceTest {
 
         //then
         Assertions.assertThat(findAllPosts.size()).isEqualTo(1);
+    }
+
+    @Test
+    public void 게시글검색() throws Exception {
+        //given
+        User user = createUser();
+        userService.join(user);
+        Long post1Id = postService.savePost(user.getId(), "newTitle", "newContent", Category.INTRODUCTION, createFileUrlPaths());
+        Long post2Id = postService.savePost(user.getId(), "newTitle", "newContent", Category.INTRODUCTION, createFileUrlPaths());
+        Long post3Id = postService.savePost(user.getId(), "Title", "newContent", Category.INTRODUCTION, createFileUrlPaths());
+
+        //when
+        List<Post> findPosts = postService.searchByTitle("new");
+
+        //then
+        Assertions.assertThat(findPosts.size()).isEqualTo(2);
     }
 
     private List<String> createFileUrlPaths() {
