@@ -1,28 +1,20 @@
 package jun.moviecommunity.service;
 
-import com.fasterxml.jackson.databind.type.LogicalType;
 import jun.moviecommunity.domain.Role;
 import jun.moviecommunity.domain.User;
 import jun.moviecommunity.repository.UserRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import java.nio.channels.IllegalSelectorException;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.Assert.*;
-
-import org.slf4j.Logger;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -41,7 +33,7 @@ public class UserServiceTest {
         Long saveId = userService.join(user);
 
         //then
-        assertEquals(user, userRepository.findOne(saveId));
+        assertEquals(user, userRepository.findById(saveId).get());
     }
 
     @Test(expected = IllegalStateException.class)
@@ -131,6 +123,8 @@ public class UserServiceTest {
 
         User user2 = new User();
         user2.setName("myName2");
+        user2.setEmail("email2");
+        user2.setNickname("nickname2");
         userService.join(user2);
 
         //when

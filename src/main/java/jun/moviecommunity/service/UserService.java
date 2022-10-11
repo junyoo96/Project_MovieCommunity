@@ -67,7 +67,7 @@ public class UserService {
      * 회원 개별 조회
     **/
     public User findOne(Long userId) {
-        return userRepository.findOne(userId);
+        return userRepository.findById(userId).get();
     }
 
     /**
@@ -75,7 +75,7 @@ public class UserService {
     **/
     @Transactional
     public User updateUser(Long userId, String password, String nickname){
-        User user = userRepository.findOne(userId);
+        User user = userRepository.findById(userId).get();
         validateDuplicateNickname(nickname);
         user.change(password, nickname);
         return user;
@@ -86,6 +86,6 @@ public class UserService {
     **/
     @Transactional
     public void deleteUser(Long userId){
-        userRepository.delete(userId);
+        userRepository.deleteById(userId);
     }
 }
