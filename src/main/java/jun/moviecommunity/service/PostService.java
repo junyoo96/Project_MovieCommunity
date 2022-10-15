@@ -7,6 +7,9 @@ import jun.moviecommunity.domain.User;
 import jun.moviecommunity.repository.PostRepository;
 import jun.moviecommunity.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,7 +57,7 @@ public class PostService {
     /**
      * 게시글 개별 조회
     **/
-    public Post findOne(Long postId) { return postRepository.findOne(postId); }
+    public Post findOne(Long postId) { return postRepository.findById(postId).get(); }
 
     /**
      * 게시글 유저별 조회
@@ -68,7 +71,7 @@ public class PostService {
     **/
     @Transactional
     public Post updatePost(Long postId, String title, String content, Category category){
-        Post post = postRepository.findOne(postId);
+        Post post = postRepository.findById(postId).get();
         post.change(title, content, category);
         return post;
     }
@@ -77,12 +80,12 @@ public class PostService {
      * 게시글 삭제
     **/
     @Transactional
-    public void deletePost(Long postId) { postRepository.delete(postId); }
+    public void deletePost(Long postId) { postRepository.deleteById(postId); }
 
     /**
      * 게시글 검색
     **/
-    public List<Post> searchByTitle(String keyword) {
-        return postRepository.searchByTitle(keyword);
+    public Page<Post> searchByKeyword(String keyword, PageRequest pageRequest) {
+        return postRepository.findAllByTitleOrContent(keyword, pageRequest);
     }
 }

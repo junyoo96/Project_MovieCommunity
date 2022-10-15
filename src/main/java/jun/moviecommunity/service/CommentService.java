@@ -27,7 +27,7 @@ public class CommentService {
     @Transactional
     public Long saveComment(Long userId, Long postId, String content) {
         User user = userRepository.findById(userId).get();
-        Post post = postRepository.findOne(postId);
+        Post post = postRepository.findById(postId).get();
 
         Comment comment = Comment.createComment(user, post, content);
         commentRepository.save(comment);
