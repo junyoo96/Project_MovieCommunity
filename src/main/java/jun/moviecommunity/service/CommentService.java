@@ -38,7 +38,7 @@ public class CommentService {
      * 댓글 개별 조회
      **/
     public Comment findOne(Long commentId) {
-        return commentRepository.findOne(commentId);
+        return commentRepository.findById(commentId).get();
     }
 
     /**
@@ -60,7 +60,7 @@ public class CommentService {
     **/
     @Transactional
     public Comment updateComment(Long commentId, String content) {
-        Comment comment = commentRepository.findOne(commentId);
+        Comment comment = commentRepository.findById(commentId).get();
         comment.change(content);
         return comment;
     }
@@ -69,7 +69,7 @@ public class CommentService {
      * 댓글 삭제
     **/
     @Transactional
-    public void deleteComment(Long commentId) {commentRepository.delete(commentId); }
+    public void deleteComment(Long commentId) {commentRepository.deleteById(commentId); }
 
     /**
      * 대댓글 등록

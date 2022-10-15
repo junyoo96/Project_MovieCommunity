@@ -2,38 +2,25 @@ package jun.moviecommunity.repository;
 
 import jun.moviecommunity.domain.Comment;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import java.util.List;
 
-@Repository
-@RequiredArgsConstructor
-public class CommentRepository {
+public interface CommentRepository extends JpaRepository<Comment, Long> {
 
-    private final EntityManager em;
+    /**
+     * 사용자 id로 댓글 조회
+    **/
+    @Query("select c from Comment c where c.author.id = :userId")
+    List<Comment> findAllByUserId(@Param("userId") Long userId);
 
-    public void save(Comment comment) {
-        em.persist(comment);
-    }
-
-    public Comment findOne(Long id) {
-        return em.find(Comment.class, id);
-    }
-
-    public List<Comment> findAllByPostId(Long postId) {
-        return em.createQuery("select c from Comment c where c.post.id = :postId", Comment.class)
-                .setParameter("postId", postId)
-                .getResultList();
-    }
-
-    public List<Comment> findAllByUserId(Long userId) {
-        return em.createQuery("select c from Comment c where c.author.id = :userId", Comment.class)
-                .setParameter("userId", userId)
-                .getResultList();
-    }
-
-    public void delete(Long id) {
-        em.remove(findOne(id));
-    }
+    /**
+     * 게시물 id로 댓글 조회
+    **/
+    @Query("select c from Comment c where c.post.id = :postId")
+    List<Comment> findAllByPostId(@Param("postId") Long postId);
 }
