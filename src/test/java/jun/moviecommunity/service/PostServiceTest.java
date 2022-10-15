@@ -10,6 +10,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.querydsl.QPageRequest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,7 +43,7 @@ public class PostServiceTest {
         //when
         Long postId = postService.savePost(user.getId(), "newTitle", "newContent", Category.INTRODUCTION, createFileUrlPaths());
         //then
-        Post getPost = postRepository.findOne(postId);
+        Post getPost = postRepository.findById(postId).get();
 
         assertEquals(user.getId(), getPost.getAuthor().getId());
         assertEquals("newTitle", getPost.getTitle());
@@ -92,6 +96,8 @@ public class PostServiceTest {
 
         User user2 = new User();
         user2.setName("user2Id");
+        user2.setEmail("email2");
+        user2.setNickname("nickname2");
         userService.join(user2);
 
         Long post1Id = postService.savePost(user1.getId(), "title1", "content1", Category.INTRODUCTION, createFileUrlPaths());
@@ -152,15 +158,27 @@ public class PostServiceTest {
         //given
         User user = createUser();
         userService.join(user);
-        Long post1Id = postService.savePost(user.getId(), "newTitle", "newContent", Category.INTRODUCTION, createFileUrlPaths());
-        Long post2Id = postService.savePost(user.getId(), "newTitle", "newContent", Category.INTRODUCTION, createFileUrlPaths());
-        Long post3Id = postService.savePost(user.getId(), "Title", "newContent", Category.INTRODUCTION, createFileUrlPaths());
+        postService.savePost(user.getId(), "keyword", "newContent", Category.INTRODUCTION, createFileUrlPaths());
+        postService.savePost(user.getId(), "newTitle", "keyword", Category.INTRODUCTION, createFileUrlPaths());
+        postService.savePost(user.getId(), "newTitle1", "newContent1", Category.INTRODUCTION, createFileUrlPaths());
+        postService.savePost(user.getId(), "newTitle2", "newContent2", Category.INTRODUCTION, createFileUrlPaths());
+        postService.savePost(user.getId(), "newTitle3", "newContent3", Category.INTRODUCTION, createFileUrlPaths());
+
+        PageRequest pageRequest = PageRequest.of(0, 1, Sort.by(Sort.Direction.DESC, "createDate"));
 
         //when
-        List<Post> findPosts = postService.searchByTitle("new");
+        Page<Post> page = postService.searchByKeyword("keyword", pageRequest);
 
         //then
-        Assertions.assertThat(findPosts.size()).isEqualTo(2);
+        List<Post> content = page.getContent();
+
+        Assertions.assertThat(content.size()).isEqualTo(1);
+        Assertions.assertThat(page.getTotalElements()).isEqualTo(2);
+        Assertions.assertThat(page.getNumber()).isEqualTo(0);
+        Assertions.assertThat(page.getTotalPages()).isEqualTo(2);
+        Assertions.assertThat(page.isFirst()).isTrue();
+        Assertions.assertThat(page.hasNext()).isTrue();
+
     }
 
     private List<String> createFileUrlPaths() {
