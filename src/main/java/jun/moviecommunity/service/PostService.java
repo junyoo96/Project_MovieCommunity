@@ -1,7 +1,5 @@
 package jun.moviecommunity.service;
 
-import jun.moviecommunity.domain.Category;
-import jun.moviecommunity.domain.File;
 import jun.moviecommunity.domain.Post;
 import jun.moviecommunity.domain.User;
 import jun.moviecommunity.repository.PostRepository;
@@ -13,7 +11,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -28,19 +25,19 @@ public class PostService {
      * 게시글 등록
     **/
     @Transactional
-    public Long savePost(Long userId, String title, String content, Category category, List<String> fileUrlPaths){
+    public Long savePost(CreatePostRequest request){
         //엔티티 조회
-        User user = userRepository.findById(userId).get();
+        User user = userRepository.findById(request.getAuthorId()).get();
 
         //게시글 생성
-        Post post = Post.createPost(user, title, content, category);
+        Post post = Post.createPost(user, request.getTitle(), request.getContent(), request.getCategory());
 
         //파일 생성
-        List<File> files = new ArrayList<>();
-        for(String fileUrlPath : fileUrlPaths){
-            File file = File.createFile(post, fileUrlPath);
-            files.add(file);
-        }
+//        List<File> files = new ArrayList<>();
+//        for(String fileUrlPath : fileUrlPaths){
+//            File file = File.createFile(post, fileUrlPath);
+//            files.add(file);
+//        }
 
         //게시글 저장
         postRepository.save(post);
@@ -50,14 +47,17 @@ public class PostService {
     /**
      * 게시글 전체 조회
     **/
-    public List<Post> findPosts() {
-        return postRepository.findAll();
+//    public Page<PostDto> findPosts(Pageable pageable) {
+//        return postRepository.findAll(pageable).map(PostDto::new);
+//    }
+    public Page<PostDto> findAll(Pageable pageable) {
+        return postRepository.findAll(pageable).map(PostDto::new);
     }
 
     /**
      * 게시글 개별 조회
     **/
-    public Post findOne(Long postId) { return postRepository.findById(postId).get(); }
+    public Post findOne(Long postId) {return postRepository.findById(postId).get(); }
 
     /**
      * 게시글 유저별 조회
@@ -70,9 +70,9 @@ public class PostService {
      * 게시글 수정
     **/
     @Transactional
-    public Post updatePost(Long postId, String title, String content, Category category){
-        Post post = postRepository.findById(postId).get();
-        post.change(title, content, category);
+    public Post updatePost(UpdatePostRequest request){
+        Post post = postRepository.findById(request.getId()).get();
+        post.change(request.getTitle(), request.getContent(), request.getCategory());
         return post;
     }
 
@@ -87,5 +87,16 @@ public class PostService {
     **/
     public Page<Post> searchByKeyword(String keyword, PageRequest pageRequest) {
         return postRepository.findAllByTitleOrContent(keyword, pageRequest);
+    }
+
+    /**
+     * 게시물 방문
+    **/
+    @Transactional
+    public Post updateVisit(Long postId) {
+        Post post = postRepository.findById(postId).get();
+        //조회수 증가
+        post.setViewCount(post.getViewCount() + 1);
+        return post;
     }
 }
