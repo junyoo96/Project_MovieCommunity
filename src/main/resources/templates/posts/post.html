@@ -1,0 +1,40 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header" />
+<body>
+<div class="container">
+    <div th:replace="fragments/bodyHeader :: bodyHeader"/>
+    <input type="hidden" th:field="*{post.id}">
+    <div class="form-group">
+        <label>작성자</label>
+        <input type="text" th:field="*{post.authorName}" class="form-control">
+    </div>
+    <div class="form-group">
+        <label>제목</label>
+        <input type="text" th:field="*{post.title}" class="form-control">
+    </div>
+    <div class="form-group">
+        <label>카테고리</label>
+        <input type="text" th:field="*{post.category}" class="form-control">
+    </div>
+    <div class="form-group">
+        <label>조회수</label>
+        <input type="text" th:field="*{post.viewCount}" class="form-control">
+    </div>
+    <div class="form-group">
+        <label>좋아요 수</label>
+        <input type="text" th:field="*{post.likeCount}" class="form-control">
+    </div>
+    <div class="form-group">
+        <label>작성일</label>
+        <input type="text" th:field="*{post.createDate}" class="form-control">
+    </div>
+    <div class="form-group">
+        <label>수정일</label>
+        <input type="text" th:field="*{post.updateDate}" class="form-control">
+    </div>
+    <br/>
+    <div th:replace="fragments/footer :: footer" />
+</div> <!-- /container -->
+</body>
+</html>
