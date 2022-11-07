@@ -21,7 +21,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
      **/
     List<User> findByEmail(String email);
 
-
     /**
      * 회원 닉네임(Nickname)으로 조회
     **/

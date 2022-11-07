@@ -19,7 +19,15 @@ public class UserService {
      * 회원가입
     **/
     @Transactional
-    public Long join(User user) {
+    public Long join(CreateUserRequest request) {
+
+        User user = new User(
+                request.getName(),
+                request.getPassword(),
+                request.getNickname(),
+                request.getEmail()
+        );
+
         validateDuplicateUser(user);
         userRepository.save(user);
         return user.getId();

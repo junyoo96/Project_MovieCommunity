@@ -1,6 +1,7 @@
 package jun.moviecommunity.domain;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -11,6 +12,7 @@ import java.util.List;
 @Entity
 @Table(name = "users")
 @Getter @Setter
+@NoArgsConstructor
 public class User {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,6 +35,19 @@ public class User {
     private List<Post> posts = new ArrayList<>();
     @OneToMany(mappedBy = "author")
     private List<Comment> comments = new ArrayList<>();
+
+    /**
+     * 회원 등록 시 생성자
+    **/
+    public User(String name, String password, String nickname, String email) {
+        this.name = name;
+        this.password = password;
+        this.nickname = nickname;
+        this.email = email;
+        this.createDate = LocalDateTime.now();
+        this.updateDate = LocalDateTime.now();
+        this.role = Role.USER;
+    }
 
     /**
      * 회원 수정시 변경가능한 정보만 변경하는 것을 보장하기 위해 setter 대신하는 함수
