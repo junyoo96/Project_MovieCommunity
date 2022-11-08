@@ -16,6 +16,7 @@ public class PostDto {
     private Long id;
     private String authorName;
     private String title;
+    private String content;
     private Category category;
     private int viewCount;
     private int likeCount;
@@ -26,6 +27,7 @@ public class PostDto {
         this.id = post.getId();
         this.authorName = post.getAuthor().getNickname();
         this.title = post.getTitle();
+        this.content = post.getContent();
         this.category = post.getCategory();
         this.viewCount = post.getViewCount();
         this.likeCount = post.getLikeCount();

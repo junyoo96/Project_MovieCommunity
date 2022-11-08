@@ -104,4 +104,24 @@ public class PostController {
         postService.updatePost(new UpdatePostRequest(form.getId(), form.getTitle(), form.getContent(), form.getCategory()));
         return "redirect:/posts";
     }
+
+    /**
+     * 게시물 삭제
+    **/
+    @GetMapping("/posts/{postId}/delete")
+    public String deletePost(@PathVariable("postId") Long postId) {
+        postService.deletePost(postId);
+        return "redirect:/posts";
+    }
+
+    /**
+     * 게시물 좋아요 기능
+    **/
+    //TODO 나중에 User id 받아서 좋아요한 user가 누군지 저장하는거 하기
+    //TODO ajax로 요청 받는거 구현
+    @GetMapping("/posts/{postId}/like")
+    private String likePost(@PathVariable("postId") Long postId) {
+        postService.likePost(postId);
+        return "redirect:/posts";
+    }
 }

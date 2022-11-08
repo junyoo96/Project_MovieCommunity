@@ -54,6 +54,9 @@ public class Post {
         return post;
     }
 
+    /**
+     * 게시물 수정
+    **/
     public void change(String title, String content, Category category) {
         this.setTitle(title);
         this.setContent(content);
@@ -61,5 +64,19 @@ public class Post {
         this.setUpdateDate(LocalDateTime.now());
 
         //TODO - DB의 file과 비교해서 사용하지 않는 file은 삭제하고 S3에서도 실제 해당 파일 삭제
+    }
+
+    /**
+     * 게시물 조회수
+    **/
+    public void increaseVisitCount() {
+        this.setViewCount(this.viewCount + 1);
+    }
+
+    /**
+     * 게시물 좋아요
+    **/
+    public void increaseLikeCount() {
+        this.setLikeCount(this.likeCount + 1);
     }
 }

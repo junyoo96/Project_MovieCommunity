@@ -95,8 +95,16 @@ public class PostService {
     @Transactional
     public Post updateVisit(Long postId) {
         Post post = postRepository.findById(postId).get();
-        //조회수 증가
-        post.setViewCount(post.getViewCount() + 1);
+        post.increaseVisitCount();
         return post;
+    }
+
+    /**
+     * 게시물 좋아요
+    **/
+    @Transactional
+    public void likePost(Long postId) {
+        Post post = postRepository.findById(postId).get();
+        post.increaseLikeCount();
     }
 }

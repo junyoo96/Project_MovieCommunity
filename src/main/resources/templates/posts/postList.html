@@ -33,7 +33,9 @@
         <th>조회수</th>
         <th>좋아요 수</th>
         <th>작성일</th>
+        <th>좋아요</th>
         <th>수정</th>
+        <th>삭제</th>
       </tr>
       </thead>
       <tbody>
@@ -45,7 +47,9 @@
         <td th:text="${post.viewCount}"></td>
         <td th:text="${post.likeCount}"></td>
         <td th:text="${post.createDate}"></td>
+        <td><a th:href="@{/posts/{id}/like (id=${post.id})}" role="button">좋아요</a></td>
         <td><a th:href="@{/posts/{id}/edit (id=${post.id})}" role="button">수정</a></td>
+        <td><a th:href="@{/posts/{id}/delete (id=${post.id})}" role="button">삭제</a></td>
       </tr>
       </tbody>
     </table>
