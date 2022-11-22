@@ -3,6 +3,7 @@ package jun.moviecommunity.service;
 import jun.moviecommunity.domain.Category;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
@@ -10,9 +11,8 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 public class CreatePostRequest {
-    private Long authorId;
-    private Category category;
-    private String title;
-    private String content;
-//    private List<String> fileUrlPaths;
+    Long authorId;
+    Category category;
+    String title;
+    String content;
 }

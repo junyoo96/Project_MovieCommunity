@@ -22,7 +22,10 @@ public class Post {
     private User author;
 
     private String title;
+
+    @Column(length=5000)
     private String content;
+
     private Category category;
     private int viewCount;
     private int likeCount;

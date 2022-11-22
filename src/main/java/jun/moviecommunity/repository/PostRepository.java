@@ -23,8 +23,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
      * 게시물 제목 또는 내용으로 게시물 검색
     **/
     @Query(
-        value = "SELECT p FROM Post p WHERE p.title LIKE %:keyword% OR p.content LIKE %:keyword%",
-        countQuery = "SELECT COUNT(p.id) FROM Post p WHERE p.title LIKE %:keyword% OR p.content LIKE %:keyword%"
+        value = "SELECT p FROM Post p WHERE p.title LIKE %:searchKeyword% OR p.content LIKE %:searchKeyword%",
+        countQuery = "SELECT COUNT(p.id) FROM Post p WHERE p.title LIKE %:searchKeyword% OR p.content LIKE %:searchKeyword%"
     )
-    Page<Post> findAllByTitleOrContent(@Param("keyword") String keyword, Pageable pageable);
+    Page<Post> findAllByTitleOrContent(@Param("searchKeyword") String searchKeyword, Pageable pageable);
 }

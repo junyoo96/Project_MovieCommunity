@@ -31,6 +31,19 @@ public class Comment {
     private LocalDateTime createDate;
     private LocalDateTime updateDate;
 
+    // 무한 대댓글 관련 컬럼
+    //REF : 댓글끼리 묶는 기능
+    //RE_STEP : 순서 나타내기
+    //RE_LEVEL : 들여쓰기 몇번할지
+//    @Enumerated(value = EnumType.STRING)
+//    private DeleteStatus isDeleted;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_id")
+    private Comment parent;
+
+    @OneToMany(mappedBy = "parent", orphanRemoval = true)
+    private List<Comment> children = new ArrayList<>();
+
     public static Comment createComment(User user, Post post, String content) {
         Comment comment = new Comment();
         comment.setAuthor(user);
@@ -41,8 +54,29 @@ public class Comment {
         return comment;
     }
 
-    public void change(String content) {
+    public static Comment createReply(User user, Post post, Comment parentComment, String content) {
+        Comment comment = new Comment();
+        comment.setAuthor(user);
+        comment.setPost(post);
+        comment.setContent(content);
+        comment.setCreateDate(LocalDateTime.now());
+        comment.setUpdateDate(LocalDateTime.now());
+        comment.setParent(parentComment);
+        return comment;
+    }
+
+    /**
+     * 댓글 수정
+    **/
+    public void update(String content) {
         this.setContent(content);
         this.setUpdateDate(LocalDateTime.now());
+    }
+
+    /**
+     * 댓글 좋아요
+     **/
+    public void increaseLikeCount() {
+        this.setLikeCount(this.likeCount + 1);
     }
 }

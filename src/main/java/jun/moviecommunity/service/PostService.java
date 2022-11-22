@@ -2,6 +2,7 @@ package jun.moviecommunity.service;
 
 import jun.moviecommunity.domain.Post;
 import jun.moviecommunity.domain.User;
+import jun.moviecommunity.repository.CommentRepository;
 import jun.moviecommunity.repository.PostRepository;
 import jun.moviecommunity.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final CommentRepository commentRepository;
 
     /**
      * 게시글 등록
@@ -67,6 +69,13 @@ public class PostService {
     }
 
     /**
+     * 게시물 제목 또는 내용으로 게시물 검색
+     **/
+    public Page<PostDto> findAllByTitleOrContent(String searchKeyword, Pageable pageable) {
+        return postRepository.findAllByTitleOrContent(searchKeyword, pageable).map(PostDto::new);
+    }
+
+    /**
      * 게시글 수정
     **/
     @Transactional
@@ -80,7 +89,10 @@ public class PostService {
      * 게시글 삭제
     **/
     @Transactional
-    public void deletePost(Long postId) { postRepository.deleteById(postId); }
+    public void deletePost(Long postId) {
+        commentRepository.deleteAllByPostId(postId);
+        postRepository.deleteById(postId);
+    }
 
     /**
      * 게시글 검색

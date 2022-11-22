@@ -3,6 +3,7 @@ package jun.moviecommunity.service;
 import jun.moviecommunity.domain.Comment;
 import jun.moviecommunity.domain.Post;
 import jun.moviecommunity.domain.User;
+import jun.moviecommunity.repository.CommentCustomRepository;
 import jun.moviecommunity.repository.CommentRepository;
 import jun.moviecommunity.repository.PostRepository;
 import jun.moviecommunity.repository.UserRepository;
@@ -18,6 +19,7 @@ import java.util.List;
 public class CommentService {
 
     private final CommentRepository commentRepository;
+    private final CommentCustomRepository commentCustomRepository;
     private final UserRepository userRepository;
     private final PostRepository postRepository;
 
@@ -45,8 +47,10 @@ public class CommentService {
      * 게시글별 댓글 조회
     **/
     public List<Comment> findCommentsByPostId(Long postId) {
-        return commentRepository.findAllByPostId(postId);
+//        return commentRepository.findAllByPostId(postId);
+        return commentCustomRepository.findAllByPostId(postId);
     }
+
 
     /**
      * 유저별 댓글 조회
@@ -61,7 +65,7 @@ public class CommentService {
     @Transactional
     public Comment updateComment(Long commentId, String content) {
         Comment comment = commentRepository.findById(commentId).get();
-        comment.change(content);
+        comment.update(content);
         return comment;
     }
 
@@ -72,7 +76,25 @@ public class CommentService {
     public void deleteComment(Long commentId) {commentRepository.deleteById(commentId); }
 
     /**
-     * 대댓글 등록
+     * 댓글 좋아요
     **/
+    @Transactional
+    public void like(Long commentId) {
+        Comment comment = commentRepository.findById(commentId).get();
+        comment.increaseLikeCount();
+    }
 
+    /**
+     * 대댓글 등록
+     **/
+    @Transactional
+    public Long saveReply(Long userId, Long postId, Long commentId, String content) {
+        User user = userRepository.findById(userId).get();
+        Post post = postRepository.findById(postId).get();
+        Comment comment = commentRepository.findById(commentId).get();
+
+        Comment reply = Comment.createReply(user, post, comment, content);
+        commentRepository.save(reply);
+        return reply.getId();
+    }
 }

@@ -1,44 +1,329 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/header :: header" />
+<head th:replace="fragments/header :: header">
+    <title>게시판상세페이지</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
 <body>
-<div class="container">
-    <div th:replace="fragments/bodyHeader :: bodyHeader"/>
-    <input type="hidden" th:field="*{post.id}">
-    <div class="form-group">
-        <label>작성자</label>
-        <input type="text" th:field="*{post.authorName}" class="form-control">
+<div th:replace="fragments/bodyHeader :: bodyHeader"/>
+<section class="blog_area single-post-area section_padding">
+    <div class="container">
+        <div class="posts-list">
+            <div class="single-post">
+                <input type="hidden" th:field="*{post.id}">
+                <div class="feature-img">
+                    <img class="img-fluid" src="../static/img/blog/single_blog_1.png" alt="">
+                </div>
+                <div class="blog_details">
+                    <h2 th:field="*{post.title}" th:text="*{post.title}"></h2>
+                    <ul class="blog-info-link mt-3 mb-4">
+                        <li><a th:field="*{post.authorNickName}" th:text="*{post.authorNickName}"><i class="far fa-user"></i></a></li>
+                        <li><a th:field="*{post.createDate}" th:text="*{post.createDate}"><i class="far fa-comments"></i></a></li>
+                        <li><a th:field="*{post.createDate}" th:text="| 좋아요 수 : ${post.likeCount}|"><i class="far fa-heart"></i></a></li>
+                        <li><a th:field="*{post.createDate}" th:text="| 조회수 : ${post.viewCount}|"><i class="far fa-eye"></i></a></li>
+                    </ul>
+                    <hr>
+                    <div th:field="*{post.content}" th:utext="*{post.content}" style='height: auto; width: 100%; border:3px solid black;'></div>
+                </div>
+            </div>
+            <br>
+            <div class="form-group" th:align="right">
+                <a class="button button-contactForm btn_1" th:href="@{/posts/{id}/edit (id=${post.id})}">게시글 수정</a>
+                <a class="button button-contactForm btn_1" th:href="@{/posts/{id}/delete (id=${post.id})}">게시글 삭제</a>
+            </div>
+
+            <div class="comment-form">
+                <h4>댓글 쓰기</h4>
+                <form class="form-contact comment_form" action="#" id="commentForm">
+                    <input type="hidden" id="comment-writer-id" value=1>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-group">
+                                <textarea class="form-control w-100" id="comment-content" cols="30" rows="9" placeholder="댓글을 입력하세요"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group" th:align="right">
+                        <a class="button button-contactForm btn_1" onclick="insertComment()">댓글 작성</a>
+                    </div>
+                </form>
+            </div>
+            <h4 th:field="count" id="count"></h4>
+
+            <!-- 조회된 댓글 영역 -->
+            <div class="comments-area">
+            </div>
+        </div>
     </div>
-    <div class="form-group">
-        <label>제목</label>
-        <input type="text" th:field="*{post.title}" class="form-control">
-    </div>
-    <div class="form-group">
-        <label>내용</label>
-        <input type="text" th:field="*{post.content}" class="form-control">
-    </div>
-    <div class="form-group">
-        <label>카테고리</label>
-        <input type="text" th:field="*{post.category}" class="form-control">
-    </div>
-    <div class="form-group">
-        <label>조회수</label>
-        <input type="text" th:field="*{post.viewCount}" class="form-control">
-    </div>
-    <div class="form-group">
-        <label>좋아요 수</label>
-        <input type="text" th:field="*{post.likeCount}" class="form-control">
-    </div>
-    <div class="form-group">
-        <label>작성일</label>
-        <input type="text" th:field="*{post.createDate}" class="form-control">
-    </div>
-    <div class="form-group">
-        <label>수정일</label>
-        <input type="text" th:field="*{post.updateDate}" class="form-control">
-    </div>
-    <br/>
-    <div th:replace="fragments/footer :: footer" />
-</div> <!-- /container -->
+</section>
+<!--================ Blog Area end =================-->
+
+<div th:replace="fragments/footer :: footer"/>
+
+<!-- 스크립트 시작 -->
+<script>
+
+getCommentList();
+
+//댓글 등록
+function insertComment() {
+    const post_id = $('#id').val();
+    const comment_writer_id = $('#comment-writer-id').val();
+    const comment_content = $('#comment-content').val();
+
+    // console.log(postId);
+
+    // if(com_writer == '') {
+    //     alert('로그인 후 이용해주세요');
+    //     return;
+    // }else if(com_content == '') {
+    //     alert('내용을 입력하세요');
+    // }
+
+    var data = {
+        "postId":post_id,
+        "userId":comment_writer_id,
+        "content":comment_content
+    }
+
+    $.ajax({
+        type:'post',
+        url:"/comments/new",
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+        success:function(data){
+            if(data === "OK") {
+                console.log('댓글 등록 완료');
+                getCommentList();
+            } else {
+                alert('로그인 이후 이용해주시기 바랍니다.');
+                console.log('댓글 등록 실패');
+            }
+        },
+        error:function(){
+            alert('통신실패');
+        }
+    });// 댓글 비동기 끝
+
+}
+
+//대댓글 등록
+function insertReply(comment_id) {
+    const user_id = $('#comment-writer-id').val();
+    const post_id = $('#id').val();
+    const class_name = "#" + "reply-content-" + comment_id;
+    const reply_content = $(class_name).val();
+
+    var data = {
+        "userId":user_id,
+        "postId":post_id,
+        "commentId":comment_id,
+        "content":reply_content
+    }
+
+    $.ajax({
+        type:'POST',
+        url:"/comments/reply/new",
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+        success:function(data){
+            if(data === 'OK') {
+                console.log('댓글 수정 완료');
+                getCommentList();
+            } else {
+                alert('로그인 이후 이용해주시기 바랍니다.');
+                console.log('댓글 수정 실패');
+            }
+        },
+        error:function(){
+            alert('통신실패');
+        }
+    });// 댓글 비동기 끝
+}
+
+
+//댓글 조회
+function getCommentList() {
+
+    const postId = $('#id').val();
+
+    $.getJSON(
+        "/comments/list/"+postId,
+        function(data) {
+            var count = data.length;
+            var list = data.list;
+
+            console.log("댓글 갖고오기", postId, count);
+
+            var comment_html = "<div class='comment-list'>";
+
+            if(count > 0){
+                $('#count').html(count + " 댓글");
+
+                $.each(data, function(index, item) {
+                    comment_html += getComment(index, item);
+                    comment_html += "<br>"
+                });
+
+                comment_html += "</div>"
+
+                $(".comments-area").html(comment_html);
+            }
+            else{
+                var comment_html = "<div>등록된 댓글이 없습니다.</div>";
+                $(".comments-area").html(comment_html);
+            }
+        }
+    );
+}
+
+//댓글 무한반복
+function getComment(idx, data) {
+    var comment_html = ""
+
+    if (data != null){
+            var content = data.content;
+            var writer = data.authorNickName;
+            var likeCount = data.likeCount;
+            var commentId = data.id;
+            var createDate = data.createDate;
+            var children = data.children;
+            console.log("뭘까", children);
+
+            comment_html += "<div style='height: auto; width: 100%; border-top:1px solid gold;' class='single-comment justify-content-between d-flex'>"
+            comment_html += "<div class='user justify-content-between d-flex'>"
+            comment_html += "<div class='thumb'>" + "<img src='../../static/img/comment/comment_1.png' alt=''>" + "</div>"
+            comment_html += "<div class='desc'>"
+
+            comment_html += "<div class='d-flex align-items-center'>"
+            comment_html += "<h5><a href='#'>" + writer +"</a></h5>"
+            comment_html += "<p class='date'>" + createDate + "</p>"
+            comment_html += "<p class='date'>" + "좋아요 수 : " + likeCount + "</p>"
+            // comment_html += "<a class='btn-reply text-uppercase' onclick='updateComment(" + id + ","+  "\"" + content + "\"" + ")'>수정</a>"
+            comment_html += "<a class='btn-reply text-uppercase' data-toggle='collapse' data-target='#multi-collapse-" + commentId + "'>수정</a>"
+            comment_html += "<a class='btn-reply text-uppercase' onclick='deleteComment(" + commentId + ")'>삭제</a>"
+            comment_html += "<a class='btn-reply text-uppercase' onclick='likeComment(" + commentId + ")'>좋아요</a>"
+            comment_html += "</div>"
+
+            comment_html += "<p class='comment'>" + content + "</p>"
+
+            //댓글 수정 영역
+            comment_html += "<form class='collapse' id='multi-collapse-" + commentId + "'>" +
+                            "<input type='hidden' id='id' value='" + commentId + "'>" +
+                            "<div className='form-group'> <textarea className='form-control' id='comment-content_" + commentId + "' rows='2' cols='80'>" + content + "</textarea></div>" +
+                            "<button type='button' id='btn-comment-update' className='btn btn-outline-primary bi bi-pencil-square' onclick='updateComment(" + commentId + ")'>수정</button>" +
+                            // "<button type='button' id='btn-comment-update' className='btn btn-outline-primary bi bi-pencil-square' onclick='updateComment(" + id + ","+  "\"" + content + "\"" + ")'>수정</button>" +
+                            "</form>";
+
+            comment_html += "<div className='d-flex justify-content-between'>"
+
+            comment_html += "<div class='reply-btn'>"
+
+            if (children.length > 0) {
+                comment_html += "<div class='d-flex align-items-center'><a class='btn-reply text-uppercase' data-toggle='collapse' data-target='#reply-collapse-" + commentId + "'>대댓글 보기</a>"
+            }
+
+            comment_html += "<a class='btn-reply text-uppercase' data-toggle='collapse' data-target='#reply-write-collapse-" + commentId + "'>댓글 작성</a></div>"
+            comment_html += "</div>"
+
+            //대댓글 쓰기 영역
+            comment_html += "<form class='collapse' id='reply-write-collapse-" + commentId + "'>" +
+                            "<input type='hidden' id='id' value='" + commentId + "'>" +
+                            "<div className='form-group'> <textarea className='form-control' id='reply-content-" + commentId + "' rows='2' cols='80'></textarea></div>" +
+                            "<a id='btn-comment-update' className='btn btn-outline-primary bi bi-pencil-square' onclick='insertReply(" + commentId + ")'>작성</a>" +
+                            // "<button type='button' id='btn-comment-update' className='btn btn-outline-primary bi bi-pencil-square' onclick='updateComment(" + id + ","+  "\"" + content + "\"" + ")'>수정</button>" +
+                            "</form>";
+
+            if (children.length > 0) {
+                //대댓글 조회 영역
+                comment_html += "<div class='collapse show' id='reply-collapse-" + commentId + "'>"
+                $.each(children, function(index, item){
+                    comment_html += getComment(index, item);
+                });
+            }
+
+            comment_html += "</div>"
+            comment_html += "</div>"
+            comment_html += "</div>"
+            comment_html += "</div>"
+            comment_html += "</div>"
+    }
+
+    return comment_html
+
+}
+
+//댓글 수정
+function updateComment(comment_id) {
+    var class_name = "#" + "comment-content_" + comment_id;
+    var comment_content = $(class_name).val();
+    var data = {
+        "content":comment_content
+    }
+
+    $.ajax({
+        type:'PUT',
+        url:"/comments/" + comment_id + "/edit",
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+        success:function(data){
+            if(data === 'OK') {
+                console.log('댓글 수정 완료');
+                getCommentList();
+            } else {
+                alert('로그인 이후 이용해주시기 바랍니다.');
+                console.log('댓글 수정 실패');
+            }
+        },
+        error:function(){
+            alert('통신실패');
+        }
+    });// 댓글 비동기 끝
+}
+
+//댓글 삭제
+function deleteComment(comment_id) {
+    $.ajax({
+        type:'DELETE',
+        url:"/comments/" + comment_id + "/delete",
+        contentType: 'application/json',
+        success:function(data){
+            if(data === 'OK') {
+                console.log('댓글 삭제 완료');
+                getCommentList();
+            } else {
+                alert('로그인 이후 이용해주시기 바랍니다.');
+                console.log('댓글 삭제 실패');
+            }
+        },
+        error:function(){
+            alert('통신실패');
+        }
+    });// 댓글 비동기 끝
+}
+
+//댓글 좋아요
+function likeComment(comment_id) {
+    $.ajax({
+        type:'PUT',
+        url:"/comments/" + comment_id + "/like",
+        contentType: 'application/json',
+        success:function(data){
+            if(data === 'OK') {
+                console.log('댓글 좋아요 완료');
+                getCommentList();
+            } else {
+                alert('로그인 이후 이용해주시기 바랍니다.');
+                console.log('댓글 좋아요 실패');
+            }
+        },
+        error:function(){
+            alert('통신실패');
+        }
+    });// 댓글 비동기 끝
+}
+
+</script>
+
 </body>
 </html>

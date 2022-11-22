@@ -8,15 +8,19 @@ import jun.moviecommunity.service.PostService;
 import jun.moviecommunity.service.UpdatePostRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -26,15 +30,14 @@ import java.util.stream.Stream;
 public class PostController {
 
     private final PostService postService;
+    private final int pagingSize = 2;
 
     /**
      * 게시물 등록 페이지
     **/
     @GetMapping("/posts/new")
     public String createPost(Model model) {
-
         PostForm form = new PostForm(1L, Stream.of(Category.values()).map(Enum::name).collect(Collectors.toList()));
-        log.info("확인", "들어옴");
         model.addAttribute("postForm", form);
         return "posts/createPostForm";
     }
@@ -43,10 +46,10 @@ public class PostController {
      * 게시물 등록
     **/
     @PostMapping("/posts/new")
-    public String create(@Valid PostForm form, BindingResult result) {
-        if(result.hasErrors()) {
-            return "posts/createPostForm";
-        }
+    public String create(PostForm form, BindingResult result) {
+//        if(result.hasErrors()) {
+//            return "posts/createPostForm";
+//        }
 
         postService.savePost(new CreatePostRequest(
                 form.getAuthorId(),
@@ -54,15 +57,36 @@ public class PostController {
                 form.getTitle(),
                 form.getContent()
         ));
+
         return "redirect:/posts";
     }
+
+//    /**
+//     * 게시물 등록
+//     **/
+//    @PostMapping("/posts/new")
+//    public ResponseEntity create(@RequestBody CreatePostRequest createPostRequest) {
+//        postService.savePost(createPostRequest);
+//        return ResponseEntity.ok(HttpStatus.OK);
+////        return "redirect:/posts";
+//    }
 
     /**
      * 게시물 전체 조회 - 페이징 적용
     **/
     @GetMapping("/posts")
-    public String list(Model model, @PageableDefault(size = 5, sort = "createDate", direction = Sort.Direction.DESC) Pageable pageable) {
-        model.addAttribute("paging", postService.findAll(pageable));
+    public String list(Model model, @PageableDefault(size = pagingSize, sort = "createDate", direction = Sort.Direction.DESC) Pageable pageable, String searchKeyword) {
+
+        Page<PostDto> list = null;
+
+        if (searchKeyword == null) {
+            list = postService.findAll(pageable);
+        }
+        else {
+            list = postService.findAllByTitleOrContent(searchKeyword, pageable);
+        }
+
+        model.addAttribute("paging", list);
         return "posts/postList";
     }
 
@@ -100,7 +124,7 @@ public class PostController {
      * 게시물 수정
     **/
     @PostMapping("/posts/{postId}/edit")
-    public String updatePost(@ModelAttribute("postForm") PostForm form) {
+    public String update(@ModelAttribute("postForm") PostForm form) {
         postService.updatePost(new UpdatePostRequest(form.getId(), form.getTitle(), form.getContent(), form.getCategory()));
         return "redirect:/posts";
     }
@@ -109,19 +133,18 @@ public class PostController {
      * 게시물 삭제
     **/
     @GetMapping("/posts/{postId}/delete")
-    public String deletePost(@PathVariable("postId") Long postId) {
+    public String delete(@PathVariable("postId") Long postId) {
         postService.deletePost(postId);
         return "redirect:/posts";
     }
 
     /**
-     * 게시물 좋아요 기능
+     * 게시물 좋아요
     **/
     //TODO 나중에 User id 받아서 좋아요한 user가 누군지 저장하는거 하기
-    //TODO ajax로 요청 받는거 구현
-    @GetMapping("/posts/{postId}/like")
-    private String likePost(@PathVariable("postId") Long postId) {
+    @PutMapping("/posts/{postId}/like")
+    private ResponseEntity like(@PathVariable("postId") Long postId) {
         postService.likePost(postId);
-        return "redirect:/posts";
+        return ResponseEntity.ok(HttpStatus.OK);
     }
 }

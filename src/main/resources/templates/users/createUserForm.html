@@ -1,6 +1,9 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/header :: header" />
+<head th:replace="fragments/header :: header">
+    <title>게시판상세페이지</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
 <style>
     .fieldError {
         border-color: #bd2130;
@@ -10,6 +13,7 @@
 
 <div class="container">
     <div th:replace="fragments/bodyHeader :: bodyHeader"/>
+<!--    <div th:replace="fragments/bodyHeader :: bodyHeader"/>-->
     <form role="form" action="/members/new" th:object="${userForm}"
           method="post">
         <div class="form-group">
@@ -47,7 +51,7 @@
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
     <br/>
-    <div th:replace="fragments/footer :: footer" />
+    <div th:replace="fragments/footer :: footer"/>
 </div> <!-- /container -->
 </body>
 </html>
