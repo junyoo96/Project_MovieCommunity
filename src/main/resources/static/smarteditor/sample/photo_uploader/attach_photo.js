@@ -334,7 +334,9 @@
     	var tempFile,
     		sUploadURL;
     	
-    	sUploadURL= 'file_uploader_html5.php'; 	//upload URL
+    	// sUploadURL= 'file_uploader_html5.php'; 	//upload URL
+		//Controller의 매핑할 URL 명시
+		sUploadURL= '/posts/image/new'; 	//upload URL
     	
     	//파일을 하나씩 보내고, 결과를 받음.
     	for(var j=0, k=0; j < nImageInfoCnt; j++) {
@@ -353,6 +355,7 @@
     function callAjaxForHTML5 (tempFile, sUploadURL){
     	var oAjax = jindo.$Ajax(sUploadURL, {
 			type: 'xhr',
+
 			method : "post",
 			onload : function(res){ // 요청이 완료되면 실행될 콜백 함수
 				var sResString = res._response.responseText;
@@ -467,16 +470,64 @@
       */
      function uploadImage (e){
     	 if(!bSupportDragAndDropAPI){
-    		 generalUpload();
+			 generalUpload();
+			 // customGeneralUpload();
     	 }else{
     		 html5Upload();
+			 //customGeneralUpload();
     	 }
      }
-     
+
+	function customGeneralUpload() {
+		 console.log("어ㅇㅇ", welUploadInputBox.element)
+	    console.log("맞나", jQuery3_4_1("#uploadInputBox")[0]);
+		console.log("맞나2", jQuery3_4_1("#uploadInputBox")[0].files);
+		let imgFile = jQuery3_4_1("#uploadInputBox")[0].files[0];
+		console.log("어이", imgFile);
+		let fdata = new FormData();
+		fdata.enctype = "multipart/form-data"
+		fdata.method = "POST"
+
+		fdata.append("filedata", imgFile)
+
+		jQuery3_4_1.ajax({
+			url: "/posts/image/new"
+			, data: fdata
+			, method: "POST"
+			, enctype: "multipart/formdata; charset=utf-8"
+			, processData: false
+			, contentType: false
+			, cache: false
+			, success: function(data) {
+				let sfileURL = data.sFileURL
+				let sfileName = data.sFileName
+				let bNewLine = data.bNewLine
+				if(data.result == "200") {
+					let aResult = []
+					let obj = {
+						"bNewLine" : bNewLine
+						, "sfileURL" : sfileURL || ""
+						, "sfileName" : sfileName || ""
+					}
+					aResult.push(obj)
+					setPhotoToEditor(aResult) // 사진을 에디터에 세팅(기존함수)
+					goReadyMode()	// 초기 사진업로드 준비상태로 되돌리기
+					window.close()	// 사진 업로드 창 닫기
+				} else {
+					alert('사진 업로드를 실패하였습니다.')
+				}
+			}
+			, error: function(xhr, textStatus, errorThrown) {
+				alert('사진 업로드를 실패하였습니다.')
+			}
+		})
+	}
+
  	/**
  	 * jindo에 파일 업로드 사용.(iframe에 Form을 Submit하여 리프레시없이 파일을 업로드하는 컴포넌트)
  	 */
  	function callFileUploader (){
+		 console.log("부름");
  		oFileUploader = new jindo.FileUploader(jindo.$("uploadInputBox"),{
  			sUrl  : location.href.replace(/\/[^\/]*$/, '') + '/file_uploader.php',	//샘플 URL입니다.
  	        sCallback : location.href.replace(/\/[^\/]*$/, '') + '/callback.html',	//업로드 이후에 iframe이 redirect될 콜백페이지의 주소

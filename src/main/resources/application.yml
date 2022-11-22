@@ -1,4 +1,5 @@
 spring:
+  # DB 설정
   datasource:
     url: jdbc:h2:tcp://localhost/~/moviecommunity
     username: sa
@@ -13,10 +14,25 @@ spring:
         #        show_sql: true
         format_sql: true
 
+  # 정적 데이터 저장 경로 명시
   web:
     resources:
       static-locations: classpath:/
 
+  # multipart 설정
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+
 logging.level:
   org.hibernate.SQL: debug
 #  org.hibernate.type: trace
+
+# aws 설정
+cloud:
+  aws:
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false

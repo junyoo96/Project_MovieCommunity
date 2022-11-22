@@ -1,5 +1,6 @@
 package jun.moviecommunity.service;
 
+import jun.moviecommunity.controller.SmartEditor;
 import jun.moviecommunity.domain.Post;
 import jun.moviecommunity.domain.User;
 import jun.moviecommunity.repository.CommentRepository;
@@ -11,7 +12,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -118,5 +121,24 @@ public class PostService {
     public void likePost(Long postId) {
         Post post = postRepository.findById(postId).get();
         post.increaseLikeCount();
+    }
+
+    /**
+     * Amazon S3에 이미지 저장
+    **/
+    public SmartEditor singleImageUpload(MultipartFile imgFile) {
+        LocalDate today = LocalDate.now();
+
+        String fileName = imgFile.getOriginalFilename();
+        System.out.println("사진이름");
+        System.out.println(fileName);
+        String filePath = "static/images/" + String.format("%02", today.getMonthValue()) + "/";
+        //나중에 구현
+//        String fileUrl = S3IamgeUpload(imgFile, filePath);
+        String fileUrl = "s3url";
+
+        SmartEditor smartEditor = new SmartEditor(fileUrl, fileName, "true");
+
+        return smartEditor;
     }
 }

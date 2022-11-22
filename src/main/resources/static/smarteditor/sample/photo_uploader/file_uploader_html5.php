@@ -10,7 +10,11 @@
 	}
 
 	$filename = rawurldecode($headers['file_name']);
-	$filename_ext = strtolower(array_pop(explode('.',$filename)));
+	//내 수정 코드 시작
+	$filename_ext_temp = explode('.',$filename);
+	$filename_ext = strtolower(array_pop($filename_ext_temp));
+	//내 수정 코드 끝
+	//$filename_ext = strtolower(array_pop(explode('.',$filename)));
 	$allow_file = array("jpg", "png", "bmp", "gif"); 
 
 	if(!in_array($filename_ext, $allow_file)) {
@@ -20,7 +24,9 @@
 		$file->name = date("YmdHis").mt_rand().".".$filename_ext;
 		$file->content = file_get_contents("php://input");
 
+        //내가 코드 수정
 		$uploadDir = '../../upload/';
+
 		if(!is_dir($uploadDir)){
 			mkdir($uploadDir, 0777);
 		}
