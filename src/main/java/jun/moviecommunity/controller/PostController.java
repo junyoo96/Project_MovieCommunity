@@ -48,7 +48,7 @@ public class PostController {
 
     //Amazon S3관련
     private final AmazonS3Client amazonS3Client;
-    private String S3Bucket = "yyj-moviecommunity-bucket";
+    private String S3Bucket = "";
 
     /**
      * 게시물 등록 페이지
