@@ -13,6 +13,7 @@ import jun.moviecommunity.service.PostService;
 import jun.moviecommunity.service.UpdatePostRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -46,9 +47,11 @@ public class PostController {
     private final PostService postService;
     private final int pagingSize = 2;
 
-    //Amazon S3관련
+    //Amazon S3
     private final AmazonS3Client amazonS3Client;
-    private String S3Bucket = "";
+    //S3 Bucket 이름
+    @Value("${my_aws.s3BucketName}")
+    private String S3Bucket;
 
     /**
      * 게시물 등록 페이지
