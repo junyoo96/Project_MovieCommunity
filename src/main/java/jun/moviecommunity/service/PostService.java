@@ -1,12 +1,14 @@
 package jun.moviecommunity.service;
 
 import jun.moviecommunity.controller.SmartEditor;
+import jun.moviecommunity.domain.File;
 import jun.moviecommunity.domain.Post;
 import jun.moviecommunity.domain.User;
 import jun.moviecommunity.repository.CommentRepository;
 import jun.moviecommunity.repository.PostRepository;
 import jun.moviecommunity.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +22,7 @@ import java.util.List;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
+@Slf4j
 public class PostService {
 
     private final PostRepository postRepository;
@@ -35,14 +38,7 @@ public class PostService {
         User user = userRepository.findById(request.getAuthorId()).get();
 
         //게시글 생성
-        Post post = Post.createPost(user, request.getTitle(), request.getContent(), request.getCategory());
-
-        //파일 생성
-//        List<File> files = new ArrayList<>();
-//        for(String fileUrlPath : fileUrlPaths){
-//            File file = File.createFile(post, fileUrlPath);
-//            files.add(file);
-//        }
+        Post post = Post.createPost(user, request.getTitle(), request.getContent(), request.getCategory(), request.getFiles());
 
         //게시글 저장
         postRepository.save(post);
@@ -55,7 +51,7 @@ public class PostService {
 //    public Page<PostDto> findPosts(Pageable pageable) {
 //        return postRepository.findAll(pageable).map(PostDto::new);
 //    }
-    public Page<PostDto> findAll(Pageable pageable) {
+    public Page<PostDto> findPosts(Pageable pageable) {
         return postRepository.findAll(pageable).map(PostDto::new);
     }
 
@@ -74,7 +70,7 @@ public class PostService {
     /**
      * 게시물 제목 또는 내용으로 게시물 검색
      **/
-    public Page<PostDto> findAllByTitleOrContent(String searchKeyword, Pageable pageable) {
+    public Page<PostDto> findPostsByTitleOrContent(String searchKeyword, Pageable pageable) {
         return postRepository.findAllByTitleOrContent(searchKeyword, pageable).map(PostDto::new);
     }
 
@@ -84,7 +80,13 @@ public class PostService {
     @Transactional
     public Post updatePost(UpdatePostRequest request){
         Post post = postRepository.findById(request.getId()).get();
-        post.change(request.getTitle(), request.getContent(), request.getCategory());
+        for (File file: request.getFiles()) {
+            log.info("수정직전요청" + file.getFileName());
+        }
+        post.change(request.getTitle(), request.getContent(), request.getCategory(), request.getFiles());
+        for (File file: post.getFiles()) {
+            log.info("수정직전" + file.getFileName());
+        }
         return post;
     }
 

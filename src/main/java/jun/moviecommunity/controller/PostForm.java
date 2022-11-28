@@ -1,6 +1,7 @@
 package jun.moviecommunity.controller;
 
 import jun.moviecommunity.domain.Category;
+import jun.moviecommunity.domain.File;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

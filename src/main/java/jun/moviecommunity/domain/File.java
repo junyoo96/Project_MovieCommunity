@@ -13,7 +13,11 @@ public class File {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "file_id")
     private Long id;
-    private String urlPath;
+
+    @Column(length=1000)
+    private String fileName;
+    @Column(length=1000)
+    private String filePath;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
@@ -35,11 +39,10 @@ public class File {
     /**
      * 생성 메소드
     **/
-    public static File createFile(Post post, String fileUrlPath) {
+    public static File createFile(String fileName, String filePath) {
         File file = new File();
-        //TODO - S3에 실제 파일 저장
-        file.setUrlPath(fileUrlPath);
-        file.setPost(post);
+        file.setFileName(fileName);
+        file.setFilePath(filePath);
         return file;
     }
 }

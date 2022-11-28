@@ -8,13 +8,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.annotation.PostConstruct;
+
 @Configuration
 public class AWSConfig {
-    @Value("${my_aws.iamAccessKey}")
+    @Value("${cloud.aws.credentials.accessKey}")
     private String iamAccessKey; // IAM Access Key
-    @Value("${my_aws.iamSecretKey}")
+    @Value("${cloud.aws.credentials.secretKey}")
     private String iamSecretKey; // IAM Secret Key
-    @Value("${my_aws.region}")
+    @Value("${cloud.aws.region.static}")
     private String region; // Bucket Region
 
     @Bean

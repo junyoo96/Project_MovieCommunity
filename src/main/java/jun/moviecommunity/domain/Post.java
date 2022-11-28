@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,19 +40,21 @@ public class Post {
     /**
      * 연관관계 편의 메소드
     **/
-    public void addFile(File file) {
-        files.add(file);
-        if(file.getPost() != this) {
-            file.setPost(this);
+    public void setFiles(List<File> files) {
+        for (File file : files) {
+            if(file.getPost() != this) {
+                file.setPost(this);
+            }
         }
     }
 
-    public static Post createPost(User author, String title, String content, Category category) {
+    public static Post createPost(User author, String title, String content, Category category, List<File> files) {
         Post post = new Post();
         post.setAuthor(author);
         post.setTitle(title);
         post.setContent(content);
         post.setCategory(category);
+        post.setFiles(files);
         post.setCreateDate(LocalDateTime.now());
         post.setUpdateDate(LocalDateTime.now());
         return post;
@@ -60,10 +63,11 @@ public class Post {
     /**
      * 게시물 수정
     **/
-    public void change(String title, String content, Category category) {
+    public void change(String title, String content, Category category, List<File> files) {
         this.setTitle(title);
         this.setContent(content);
         this.setCategory(category);
+        this.setFiles(files);
         this.setUpdateDate(LocalDateTime.now());
 
         //TODO - DB의 file과 비교해서 사용하지 않는 file은 삭제하고 S3에서도 실제 해당 파일 삭제

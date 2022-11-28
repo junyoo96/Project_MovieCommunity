@@ -1,24 +1,21 @@
 package jun.moviecommunity.repository;
 
 import jun.moviecommunity.domain.File;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
-import javax.persistence.EntityManager;
+import java.util.Collection;
+import java.util.List;
 
-@Repository
-@RequiredArgsConstructor
-public class FileRepository {
+public interface FileRepository extends JpaRepository<File, Long> {
 
-    private final EntityManager em;
+    @Query("select f from File f where f.filePath in :filePaths")
+    List<File> findByFilePaths(@Param("filePaths") Collection<String> filePaths);
 
-    public File findOne(Long id) {
-        return em.find(File.class, id);
-    }
+    @Query("select f from File f where f.post.id = :postId")
+    List<File> findAllByPostId(@Param("postId") Long postId);
 
-    @Transactional
-    public void delete(Long id) {
-        em.remove(findOne(id));
-    }
+//    @Query("delete from File f where f.id in :ids")
+//    void deleteAllByIdIn(@Param("ids") List<Long> ids);
 }

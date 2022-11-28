@@ -13,7 +13,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.querydsl.QPageRequest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,7 +30,8 @@ public class PostServiceTest {
     @Autowired PostService postService;
     @Autowired PostRepository postRepository;
     @Autowired UserService userService;
-    @Autowired FileRepository fileRepository;
+    @Autowired
+    FileRepository fileRepository;
 
     private final static Logger log = LoggerFactory.getLogger(PostServiceTest.class);
 

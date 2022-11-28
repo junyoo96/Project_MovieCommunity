@@ -1,6 +1,7 @@
 package jun.moviecommunity.service;
 
 import jun.moviecommunity.domain.Category;
+import jun.moviecommunity.domain.File;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,4 +16,5 @@ public class CreatePostRequest {
     Category category;
     String title;
     String content;
+    List<File> files;
 }
