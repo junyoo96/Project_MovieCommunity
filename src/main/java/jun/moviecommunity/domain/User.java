@@ -18,10 +18,12 @@ public class User {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private Long id;
-    @Column(name = "username", length = 15)
+    @Column(name = "login_id")
+    private String loginId;
+    @Column(length = 15)
     private String name;
     private String password;
-    @Column(length = 15)
+    @Column(length = 20)
     private String nickname;
     private String email;
     private String imagePath;
@@ -39,9 +41,10 @@ public class User {
     /**
      * 회원 등록 시 생성자
     **/
-    public User(String name, String password, String nickname, String email) {
-        this.name = name;
+    public User(String loginId, String password, String name, String nickname, String email) {
+        this.loginId = loginId;
         this.password = password;
+        this.name = name;
         this.nickname = nickname;
         this.email = email;
         this.createDate = LocalDateTime.now();
@@ -53,8 +56,11 @@ public class User {
      * 회원 수정시 변경가능한 정보만 변경하는 것을 보장하기 위해 setter 대신하는 함수
      * 패스워드, 닉네임만 수정가능
     **/
-    public void change(String password, String nickname) {
+    public void change(String password, String name, String nickname, String email) {
         this.password = password;
+        this.name = name;
         this.nickname = nickname;
+        this.email = email;
+        this.updateDate = LocalDateTime.now();
     }
 }

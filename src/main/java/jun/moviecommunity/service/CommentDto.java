@@ -13,6 +13,7 @@ import java.util.List;
 public class CommentDto {
 
     private Long id;
+    private Long authorId;
     private String authorNickName;
     private String content;
     private int likeCount;
@@ -23,6 +24,7 @@ public class CommentDto {
 
     public CommentDto(Comment comment) {
         this.id = comment.getId();
+        this.authorId = comment.getAuthor().getId();
         this.authorNickName = comment.getAuthor().getNickname();
         this.content = comment.getContent();
         this.likeCount = comment.getLikeCount();

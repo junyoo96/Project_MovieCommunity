@@ -43,7 +43,9 @@
 
 <!--            <div class="col-lg-8 mb-5 mb-lg-0">-->
         <div th:align="right">
-            <a href="/posts/new" class="genric-btn primary">게시물 작성</a>
+            <div th:if="${session.loginUser != null}">
+                <a href="/posts/new" class="genric-btn primary">게시물 작성</a>
+            </div>
             <hr>
         </div>
 
@@ -65,17 +67,21 @@
                         <ul class="blog-info-link">
                             <li><a th:text="${post.authorNickName}"><i class="far fa-user"></i></a></li>
                             <li><a><i class="far fa-eye" th:text="| 조회수 : ${post.viewCount}|"></i></a></li>
-                            <li><a><i class="far fa-heart" th:text="| 좋아요 : ${post.likeCount}|"></i></a></li>
+
     <!--                                    <li><a href="#"><i class="far fa-comments"></i> 03 Comments</a></li>-->
-                            <li><a role="button" th:onclick="'likePost(' + ${post.id} + ');'">좋아요</a></li>
-                            <li><a th:href="@{/posts/{id}/edit (id=${post.id})}" role="button">수정</a></li>
-                            <a th:href="@{/posts/{id}/delete (id=${post.id})}" role="button">삭제</a>
+
+                            <li><a><i class="far fa-heart" th:text="| 좋아요 : ${post.likeCount}|"></i></a></li>
+                            <div th:if="${session.loginUser != null}">
+                                <li><a role="button" th:onclick="'likePost(' + ${post.id} + ');'">좋아요</a></li>
+                                <div th:if="${session.loginUser.id == post.authorId}">
+                                    <li><a th:href="@{/posts/{id}/edit (id=${post.id})}" role="button">수정</a></li>
+                                    <li><a th:href="@{/posts/{id}/delete (id=${post.id})}" role="button">삭제</a></li>
+                                </div>
+                            </div>
                         </ul>
                     </div>
                 </article>
             </th:block>
-
-
 
             <!-- 페이징 처리 시작 -->
             <div th:if="${!paging.isEmpty()}">

@@ -1,5 +1,6 @@
 package jun.moviecommunity.service;
 
+import jun.moviecommunity.controller.UserForm;
 import jun.moviecommunity.domain.User;
 import jun.moviecommunity.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -7,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -16,53 +18,59 @@ public class UserService {
     private final UserRepository userRepository;
 
     /**
-     * 회원가입
+     * 회원 가입
     **/
     @Transactional
-    public Long join(CreateUserRequest request) {
+    public Long join(UserForm form) {
 
         User user = new User(
-                request.getName(),
-                request.getPassword(),
-                request.getNickname(),
-                request.getEmail()
+                form.getLoginId(),
+                form.getPassword(),
+                form.getName(),
+                form.getNickname(),
+                form.getEmail()
         );
 
-        validateDuplicateUser(user);
         userRepository.save(user);
         return user.getId();
     }
 
     /**
-     * 중복회원 확인
+     * 중복회원 검사
     **/
-    private void validateDuplicateUser(User user) {
-        //중복 아이디 검사
-        List<User> findUsersByName = userRepository.findByName(user.getName());
-        if(!findUsersByName.isEmpty()){
-            throw new IllegalStateException("이미 사용중인 아이디입니다.");
+    public boolean validateDuplicateLoginId(String loginId) {
+        Optional<User> findUserByLoginId = userRepository.findByLoginId(loginId);
+        if(!findUserByLoginId.isEmpty()){
+            return false;
         }
 
-        //중복 이메일 검사
-        List<User> findUsersByEmail = userRepository.findByEmail(user.getEmail());
-        if(!findUsersByEmail.isEmpty()){
-            throw new IllegalStateException("이미 사용중인 메일입니다.");
-        }
-
-        //중복 닉네임 검사
-        validateDuplicateNickname(user.getNickname());
+        return true;
     }
 
     /**
-     * 중복닉네임 확인
+     * 중복닉네임 검사
      **/
-    private void validateDuplicateNickname(String nickname) {
-        //중복 닉네임 검사
-        List<User> findUsersByNickname = userRepository.findByNickname(nickname);
-        if(!findUsersByNickname.isEmpty()){
-            throw new IllegalStateException("이미 사용중인 닉네임입니다.");
+    public boolean validateDuplicateNickname(String nickname) {
+        Optional<User> findUserByNickname = userRepository.findByNickname(nickname);
+        if(!findUserByNickname.isEmpty()){
+            return false;
         }
+
+        return true;
     }
+
+    /**
+     * 중복이메일 확인
+    **/
+    public boolean validateDuplicateEmail(String email) {
+        Optional<User> findUserByEmail = userRepository.findByEmail(email);
+        if(!findUserByEmail.isEmpty()){
+            return false;
+        }
+
+        return true;
+    }
+
 
     /**
      * 회원 전체 조회
@@ -79,13 +87,20 @@ public class UserService {
     }
 
     /**
+     * 회원 로그인으로 조회
+    *
+     * @return*/
+    public User findByLoginId(String loginId) {
+        return userRepository.findByLoginId(loginId).get();
+    }
+
+    /**
      * 회원 수정
     **/
     @Transactional
-    public User updateUser(Long userId, String password, String nickname){
+    public User updateUser(Long userId, String password, String name, String nickname, String email){
         User user = userRepository.findById(userId).get();
-        validateDuplicateNickname(nickname);
-        user.change(password, nickname);
+        user.change(password, name, nickname, email);
         return user;
     }
 

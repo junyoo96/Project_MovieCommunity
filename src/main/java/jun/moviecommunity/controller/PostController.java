@@ -4,6 +4,8 @@ import jun.moviecommunity.domain.Category;
 import jun.moviecommunity.domain.File;
 import jun.moviecommunity.domain.Post;
 import jun.moviecommunity.service.*;
+import jun.moviecommunity.validator.PostCreateValidator;
+import jun.moviecommunity.validator.PostUpdateValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -19,6 +21,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 import java.io.*;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -34,26 +38,36 @@ public class PostController {
     private final PostService postService;
     private final FileService fileService;
     private final S3Service s3Service;
+    private final PostCreateValidator postCreateValidator;
+    private final PostUpdateValidator postUpdateValidator;
+
     private final int pagingSize = 2;
 
     /**
      * 게시물 등록 페이지
     **/
     @GetMapping("/posts/new")
-    public String createPost(Model model) {
-        PostForm form = new PostForm(1L, Stream.of(Category.values()).map(Enum::name).collect(Collectors.toList()));
+    public String createPostForm(Model model) {
+        PostForm form = new PostForm(Stream.of(Category.values()).map(Enum::name).collect(Collectors.toList()));
         model.addAttribute("postForm", form);
         return "posts/createPostForm";
     }
 
     /**
      * 게시물 등록
-    **/
+     **/
     @PostMapping("/posts/new")
-    public String create(PostForm form, BindingResult result) {
-//        if(result.hasErrors()) {
-//            return "posts/createPostForm";
-//        }
+    public String create(@Valid PostForm form, BindingResult result, HttpSession httpSession) {
+        log.info("게시물 작성 요청");
+        postCreateValidator.validate(form, result);
+
+        if(result.hasErrors()) {
+            log.info("게시물 작성 요청 에러");
+            form.setCategories(Stream.of(Category.values()).map(Enum::name).collect(Collectors.toList()));
+            return "posts/createPostForm";
+        }
+
+        UserDto userDto = (UserDto) httpSession.getAttribute(SessionConst.LOGIN_USER);
 
         String content = form.getContent();
 
@@ -61,7 +75,7 @@ public class PostController {
         List<File> files = fileService.findFilesByFilePaths(filePaths);
 
         Long postId = postService.savePost(new CreatePostRequest(
-                form.getAuthorId(),
+                userDto.getId(),
                 form.getCategory(),
                 form.getTitle(),
                 content,
@@ -277,7 +291,8 @@ public class PostController {
                 post.getCategory(),
                 Stream.of(Category.values()).map(Enum::name).collect(Collectors.toList()),
                 post.getTitle(),
-                post.getContent()
+                post.getContent(),
+                false
         );
 
         model.addAttribute("postForm", form);
@@ -288,14 +303,24 @@ public class PostController {
      * 게시물 수정
     **/
     @PostMapping("/posts/{postId}/edit")
-    public String update(@ModelAttribute("postForm") PostForm form) {
+    public String update(@Valid PostForm form, BindingResult result) {
+        log.info("게시물 수정");
+
+        //게시물 유효성 검사
+        log.info("null임 {} {} {}", postUpdateValidator, form, result);
+        postUpdateValidator.validate(form, result);
+
+        if(result.hasErrors()) {
+            log.info("게시물 수정 에러");
+            form.setCategories(Stream.of(Category.values()).map(Enum::name).collect(Collectors.toList()));
+            return "posts/updatePostForm";
+        }
+
+        //사진 관련 처리
         Long postId = form.getId();
         String content = form.getContent();
-        log.info("아이디" + postId);
         List<File> existedFiles = fileService.findFilesByPostId(postId);
-        log.info("존재파일" + existedFiles.size());
         List<String> updatedFilePaths = fileService.getFilePathsFromContent(content);
-        log.info("수정한파일" + updatedFilePaths.size());
 
         List<File> existedFilesRemoved = new ArrayList<>();
         List<String> updatedFilePathsRemoved = new ArrayList<>();
@@ -316,16 +341,11 @@ public class PostController {
 
         List<File> updatedFile = fileService.findFilesByFilePaths(updatedFilePaths);
 
-        log.info("진짜업데이트할파일", updatedFile.size());
-
         for (File file : updatedFile) {
             existedFiles.add(file);
         }
 
-        for(File file : existedFiles) {
-            log.info("남아있는파일이름" + file.getFileName());
-        }
-
+        //게시물 수정
         postService.updatePost(new UpdatePostRequest(postId, form.getTitle(), content, form.getCategory(), existedFiles));
 
         List<Long> removeFileIds = new ArrayList<>();
@@ -335,9 +355,11 @@ public class PostController {
             removeFileNames.add(file.getFileName());
         }
 
+        //S3에서 사용안하는 이미지 제거
         s3Service.delete(removeFileNames);
+        //파일 테이블에서 사용안하는 이미지 제거
         fileService.deletePostByIds(removeFileIds);
-        return "redirect:/posts";
+        return "redirect:/posts/" + postId;
     }
 
     /**
@@ -368,5 +390,4 @@ public class PostController {
         postService.likePost(postId);
         return ResponseEntity.ok(HttpStatus.OK);
     }
-
 }

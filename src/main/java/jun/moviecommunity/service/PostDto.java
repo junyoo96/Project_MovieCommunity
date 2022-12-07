@@ -14,6 +14,7 @@ import java.time.LocalTime;
 public class PostDto {
 
     private Long id;
+    private Long authorId;
     private String authorNickName;
     private String title;
     private String content;
@@ -25,6 +26,7 @@ public class PostDto {
 
     public PostDto(Post post) {
         this.id = post.getId();
+        this.authorId = post.getAuthor().getId();
         this.authorNickName = post.getAuthor().getNickname();
         this.title = post.getTitle();
         this.content = post.getContent();

@@ -7,24 +7,26 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.swing.text.html.Option;
 import java.util.List;
+import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
     /**
-     * 회원 아이디(Username)로 조회
+     * 회원 아이디(loginId)로 조회
     **/
-    List<User> findByName(String name);
+    Optional<User> findByLoginId(String loginId);
 
     /**
      * 회원 이메일(Email)로 조회
      **/
-    List<User> findByEmail(String email);
+    Optional<User> findByEmail(String email);
 
     /**
      * 회원 닉네임(Nickname)으로 조회
     **/
-    List<User> findByNickname(String nickname);
+    Optional<User> findByNickname(String nickname);
 
 }
 

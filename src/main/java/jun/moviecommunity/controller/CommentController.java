@@ -12,6 +12,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,7 +35,14 @@ public class CommentController {
      * 댓글 등록
     **/
     @PostMapping("/comments/new")
-    public ResponseEntity create(@RequestBody CreateCommentRequest createCommentRequest) {
+    public ResponseEntity create(@RequestBody @Valid CreateCommentRequest createCommentRequest, BindingResult result) {
+
+        //댓글 빈칸인 경우
+        if(result.hasErrors()) {
+            return ResponseEntity.ok(HttpStatus.BAD_REQUEST);
+        }
+
+        //댓글 저장
         commentService.saveComment(createCommentRequest.getUserId(), createCommentRequest.getPostId(), createCommentRequest.getContent());
         return ResponseEntity.ok(HttpStatus.OK);
     }
@@ -53,6 +61,7 @@ public class CommentController {
             if (c.getParent()!=null) map.get(c.getParent().getId()).getChildren().add(dto);
             else result.add(dto);
         });
+
         return result;
     }
 
@@ -60,7 +69,13 @@ public class CommentController {
      * 댓글 수정
     **/
     @PutMapping("/comments/{commentId}/edit")
-    public ResponseEntity edit(@PathVariable("commentId") Long id, @RequestBody UpdateCommentRequest request) {
+    public ResponseEntity edit(@PathVariable("commentId") Long id, @RequestBody @Valid UpdateCommentRequest request, BindingResult result) {
+        //댓글 내용이 비어있을 경우
+        if(result.hasErrors()) {
+            return ResponseEntity.ok(HttpStatus.BAD_REQUEST);
+        }
+
+        //댓글 수정
         commentService.updateComment(id, request.getContent());
         Comment findComment = commentService.findOne(id);
         return ResponseEntity.ok(HttpStatus.OK);
@@ -91,6 +106,8 @@ public class CommentController {
     static class CreateCommentRequest {
         private Long postId;
         private Long userId;
+
+        @NotBlank
         private String content;
     }
 
@@ -99,6 +116,7 @@ public class CommentController {
     **/
     @Data
     static class UpdateCommentRequest {
+        @NotBlank
         private String content;
     }
 
@@ -106,7 +124,13 @@ public class CommentController {
      * 대댓글 등록
     **/
     @PostMapping("/comments/reply/new")
-    public ResponseEntity createReply(@RequestBody CreateReplyRequest createReplyRequest) {
+    public ResponseEntity createReply(@RequestBody @Valid CreateReplyRequest createReplyRequest, BindingResult result) {
+        //댓글 내용이 비어있을 경우
+        if(result.hasErrors()) {
+            return ResponseEntity.ok(HttpStatus.BAD_REQUEST);
+        }
+
+        //대댓글 저장
         commentService.saveReply(createReplyRequest.getUserId(), createReplyRequest.getPostId(), createReplyRequest.getCommentId(), createReplyRequest.getContent());
         return ResponseEntity.ok(HttpStatus.OK);
     }
@@ -119,6 +143,8 @@ public class CommentController {
         private Long userId;
         private Long postId;
         private Long commentId;
+
+        @NotBlank
         private String content;
     }
 }

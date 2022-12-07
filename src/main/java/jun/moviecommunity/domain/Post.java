@@ -2,6 +2,7 @@ package jun.moviecommunity.domain;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.nio.file.Files;
@@ -12,6 +13,7 @@ import java.util.List;
 @Entity
 @Table(name = "posts")
 @Getter @Setter
+@ToString
 public class Post {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,9 +43,11 @@ public class Post {
      * 연관관계 편의 메소드
     **/
     public void setFiles(List<File> files) {
-        for (File file : files) {
-            if(file.getPost() != this) {
-                file.setPost(this);
+        if (files != null) {
+            for (File file : files) {
+                if(file.getPost() != this) {
+                    file.setPost(this);
+                }
             }
         }
     }
