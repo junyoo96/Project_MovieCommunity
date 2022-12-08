@@ -12,7 +12,7 @@ import java.util.List;
 @Entity
 @Table(name = "comments")
 @Getter @Setter
-public class Comment {
+public class Comment extends BaseTimeEntity{
 
     @Id @GeneratedValue
     @Column(name = "comment_id")
@@ -28,8 +28,6 @@ public class Comment {
 
     private String content;
     private int likeCount;
-    private LocalDateTime createDate;
-    private LocalDateTime updateDate;
 
     // 무한 대댓글 관련 컬럼
     //REF : 댓글끼리 묶는 기능
@@ -49,8 +47,6 @@ public class Comment {
         comment.setAuthor(user);
         comment.setPost(post);
         comment.setContent(content);
-        comment.setCreateDate(LocalDateTime.now());
-        comment.setUpdateDate(LocalDateTime.now());
         return comment;
     }
 
@@ -59,8 +55,6 @@ public class Comment {
         comment.setAuthor(user);
         comment.setPost(post);
         comment.setContent(content);
-        comment.setCreateDate(LocalDateTime.now());
-        comment.setUpdateDate(LocalDateTime.now());
         comment.setParent(parentComment);
         return comment;
     }
@@ -70,7 +64,6 @@ public class Comment {
     **/
     public void update(String content) {
         this.setContent(content);
-        this.setUpdateDate(LocalDateTime.now());
     }
 
     /**

@@ -8,7 +8,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "files")
 @Getter @Setter
-public class File {
+public class File extends BaseTimeEntity{
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "file_id")

@@ -13,7 +13,7 @@ import java.util.List;
 @Table(name = "users")
 @Getter @Setter
 @NoArgsConstructor
-public class User {
+public class User extends BaseTimeEntity{
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
@@ -27,8 +27,6 @@ public class User {
     private String nickname;
     private String email;
     private String imagePath;
-    private LocalDateTime createDate;
-    private LocalDateTime updateDate;
     @Enumerated(EnumType.STRING)
     private Role role;
 
@@ -47,8 +45,6 @@ public class User {
         this.name = name;
         this.nickname = nickname;
         this.email = email;
-        this.createDate = LocalDateTime.now();
-        this.updateDate = LocalDateTime.now();
         this.role = Role.USER;
     }
 
@@ -61,6 +57,5 @@ public class User {
         this.name = name;
         this.nickname = nickname;
         this.email = email;
-        this.updateDate = LocalDateTime.now();
     }
 }

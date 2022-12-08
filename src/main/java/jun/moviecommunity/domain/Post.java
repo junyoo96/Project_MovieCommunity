@@ -14,7 +14,7 @@ import java.util.List;
 @Table(name = "posts")
 @Getter @Setter
 @ToString
-public class Post {
+public class Post extends BaseTimeEntity{
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "post_id", length = 20)
@@ -32,8 +32,6 @@ public class Post {
     private Category category;
     private int viewCount;
     private int likeCount;
-    private LocalDateTime createDate;
-    private LocalDateTime updateDate;
 
     //Post가 삭제될 때 관련된 File도 모두 삭제하기 위해 CascadeType.ALL로 설정
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -59,8 +57,6 @@ public class Post {
         post.setContent(content);
         post.setCategory(category);
         post.setFiles(files);
-        post.setCreateDate(LocalDateTime.now());
-        post.setUpdateDate(LocalDateTime.now());
         return post;
     }
 
@@ -72,8 +68,6 @@ public class Post {
         this.setContent(content);
         this.setCategory(category);
         this.setFiles(files);
-        this.setUpdateDate(LocalDateTime.now());
-
         //TODO - DB의 file과 비교해서 사용하지 않는 file은 삭제하고 S3에서도 실제 해당 파일 삭제
     }
 
