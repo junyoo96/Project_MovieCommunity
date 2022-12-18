@@ -1,10 +1,13 @@
 package jun.moviecommunity.service;
 
+import jun.moviecommunity.controller.PostSearchCondition;
 import jun.moviecommunity.controller.SmartEditor;
+import jun.moviecommunity.domain.Category;
 import jun.moviecommunity.domain.File;
 import jun.moviecommunity.domain.Post;
 import jun.moviecommunity.domain.User;
 import jun.moviecommunity.repository.CommentRepository;
+import jun.moviecommunity.repository.PostCustomRepository;
 import jun.moviecommunity.repository.PostRepository;
 import jun.moviecommunity.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +29,7 @@ import java.util.List;
 public class PostService {
 
     private final PostRepository postRepository;
+    private final PostCustomRepository postCustomRepository;
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
 
@@ -99,12 +103,12 @@ public class PostService {
         postRepository.deleteById(postId);
     }
 
-    /**
-     * 게시글 검색
-    **/
-    public Page<Post> searchByKeyword(String keyword, PageRequest pageRequest) {
-        return postRepository.findAllByTitleOrContent(keyword, pageRequest);
-    }
+//    /**
+//     * 게시글 검색
+//    **/
+//    public Page<Post> searchByKeyword(String keyword, PageRequest pageRequest) {
+//        return postRepository.findAllByTitleOrContent(keyword, pageRequest);
+//    }
 
     /**
      * 게시물 방문
@@ -142,5 +146,9 @@ public class PostService {
         SmartEditor smartEditor = new SmartEditor(fileUrl, fileName, "true");
 
         return smartEditor;
+    }
+
+    public Page<PostDto> findPostsByCriteria(PostSearchCondition postSearchCondition, Pageable pageable) {
+        return postCustomRepository.findAllByCriteria(postSearchCondition, pageable).map(PostDto::new);
     }
 }

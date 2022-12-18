@@ -24,13 +24,13 @@ public class HomeController {
     @RequestMapping("/")
     public String home(HttpServletRequest request) {
 
-        //TODO - 나중에 지우기(로그인 매번하기 번거로워서 작성
-        if (request.getSession().getAttribute(SessionConst.LOGIN_USER ) == null) {
-            UserDto loginUser = loginService.login("test", "test!");
-            HttpSession session = request.getSession();
-            session.setAttribute(SessionConst.LOGIN_USER, loginUser);
-        }
-        //TODO - 끝
+//        //TODO - 나중에 지우기(로그인 매번하기 번거로워서 작성
+//        if (request.getSession().getAttribute(SessionConst.LOGIN_USER ) == null) {
+//            UserDto loginUser = loginService.login("test", "test!");
+//            HttpSession session = request.getSession();
+//            session.setAttribute(SessionConst.LOGIN_USER, loginUser);
+//        }
+//        //TODO - 끝
 
         return "home";
     }

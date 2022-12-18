@@ -49,9 +49,9 @@ public class LoginController {
         //세션에 로그인 회원 정보 보관
         session.setAttribute(SessionConst.LOGIN_USER, loginUser);
 
-        //TODO - 테스트 때문에 바꿈
-//        return "redirect:" + redirectURL;
-        return "home";
+        return "redirect:" + redirectURL;
+        //테스트 할 때 사용
+        //        return "home";
     }
 
     /**

@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,8 +18,8 @@ public class CommentDto {
     private String authorNickName;
     private String content;
     private int likeCount;
-    private LocalDateTime createDate;
-    private LocalDateTime updateDate;
+    private String createDate;
+    private String updateDate;
     //대댓글
     private List<CommentDto> children = new ArrayList<>();
 
@@ -28,7 +29,7 @@ public class CommentDto {
         this.authorNickName = comment.getAuthor().getNickname();
         this.content = comment.getContent();
         this.likeCount = comment.getLikeCount();
-        this.createDate = comment.getCreateDate();
-        this.updateDate = comment.getUpdateDate();
+        this.createDate = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(comment.getCreateDate());
+        this.updateDate = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(comment.getUpdateDate());
     }
 }

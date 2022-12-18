@@ -8,6 +8,7 @@ import lombok.Data;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 @Data
 @AllArgsConstructor
@@ -21,8 +22,8 @@ public class PostDto {
     private Category category;
     private int viewCount;
     private int likeCount;
-    private LocalDateTime createDate;
-    private LocalDateTime updateDate;
+    private String createDate;
+    private String updateDate;
 
     public PostDto(Post post) {
         this.id = post.getId();
@@ -33,7 +34,7 @@ public class PostDto {
         this.category = post.getCategory();
         this.viewCount = post.getViewCount();
         this.likeCount = post.getLikeCount();
-        this.createDate = post.getCreateDate();
-        this.updateDate = post.getUpdateDate();
+        this.createDate = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(post.getCreateDate());
+        this.updateDate = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(post.getUpdateDate());
     }
 }

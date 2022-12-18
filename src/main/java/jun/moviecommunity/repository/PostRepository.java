@@ -1,5 +1,6 @@
 package jun.moviecommunity.repository;
 
+import jun.moviecommunity.domain.Category;
 import jun.moviecommunity.domain.Post;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

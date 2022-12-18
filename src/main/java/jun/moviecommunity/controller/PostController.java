@@ -3,6 +3,8 @@ package jun.moviecommunity.controller;
 import jun.moviecommunity.domain.Category;
 import jun.moviecommunity.domain.File;
 import jun.moviecommunity.domain.Post;
+import jun.moviecommunity.repository.PostCustomRepository;
+import jun.moviecommunity.repository.PostRepository;
 import jun.moviecommunity.service.*;
 import jun.moviecommunity.validator.PostCreateValidator;
 import jun.moviecommunity.validator.PostUpdateValidator;
@@ -12,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -40,8 +43,6 @@ public class PostController {
     private final S3Service s3Service;
     private final PostCreateValidator postCreateValidator;
     private final PostUpdateValidator postUpdateValidator;
-
-    private final int pagingSize = 2;
 
     /**
      * 게시물 등록 페이지
@@ -249,22 +250,44 @@ public class PostController {
 //        return new MappingJackson2JsonView();
     }
 
+//    /**
+//     * 게시물 전체 조회 - 페이징 적용 - 레거시
+//    **/
+//    @GetMapping("/posts")
+//    public String list(Model model, @PageableDefault(size = pagingSize, sort = "createDate", direction = Sort.Direction.DESC) Pageable pageable, String searchKeyword, Category category) {
+//
+//        Page<PostDto> pagingList = null;
+//
+//        log.info("확인확인 {} {}", pageable.getPageSize(), pageable.getSort());
+//
+//        if ((searchKeyword == null || searchKeyword.equals("null")) && category == null) {
+//            pagingList = postService.findPosts(pageable);
+//        }
+//        else {
+//            pagingList = postService.findPostsByTitleOrContent(searchKeyword, pageable);
+//        }
+//
+//        String sortValue = pagingList.getSort().toString().replace(": ", ",");
+//        log.info("함보자 {} {} {} 새거 {} {}", searchKeyword, pagingList.getSort(), pagingList.getSize(), pagingList.getPageable().getSort(), sortValue);
+//
+//        List<String> categories = Stream.of(Category.values()).map(Enum::name).collect(Collectors.toList());
+//
+//        model.addAttribute("paging", pagingList);
+//        model.addAttribute("searchKeyword", searchKeyword); //검색어
+//        model.addAttribute("sortValue", sortValue); //정렬 기준
+//        model.addAttribute("categories", categories); //카테고리
+//        return "posts/postList";
+//    }
+
     /**
-     * 게시물 전체 조회 - 페이징 적용
+     * 게시물 전체 조회 페이지
     **/
     @GetMapping("/posts")
-    public String list(Model model, @PageableDefault(size = pagingSize, sort = "createDate", direction = Sort.Direction.DESC) Pageable pageable, String searchKeyword) {
+    public String listPage(Model model, String searchKeyword) {
 
-        Page<PostDto> list = null;
-
-        if (searchKeyword == null) {
-            list = postService.findPosts(pageable);
-        }
-        else {
-            list = postService.findPostsByTitleOrContent(searchKeyword, pageable);
-        }
-
-        model.addAttribute("paging", list);
+        List<String> categories = Stream.of(Category.values()).map(Enum::name).collect(Collectors.toList());
+        model.addAttribute("categories", categories); //카테고리
+        model.addAttribute("searchKeyword", searchKeyword);
         return "posts/postList";
     }
 

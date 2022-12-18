@@ -9,293 +9,215 @@
 <!--================Blog Area =================-->
 <section class="blog_area section_padding">
     <div class="container">
-<!--        <table class="table table-striped">-->
-<!--            <thead>-->
-<!--            <tr>-->
-<!--                <th>게시글번호</th>-->
-<!--                <th>작성자</th>-->
-<!--                <th>제목</th>-->
-<!--                <th>카테고리</th>-->
-<!--                <th>조회수</th>-->
-<!--                <th>좋아요 수</th>-->
-<!--                <th>작성일</th>-->
-<!--                <th>좋아요</th>-->
-<!--                <th>수정</th>-->
-<!--                <th>삭제</th>-->
-<!--            </tr>-->
-<!--            </thead>-->
-<!--            <tbody>-->
-<!--            <tr th:each="post : ${paging}">-->
-<!--                <td th:text="${post.id}"></td>-->
-<!--                <td th:text="${post.authorNickName}"></td>-->
-<!--                <td><a th:text="${post.title}" th:href="@{/posts/{id} (id=${post.id})}"></a></td>-->
-<!--                <td th:text="${post.category}"></td>-->
-<!--                <td th:text="${post.viewCount}"></td>-->
-<!--                <td th:text="${post.likeCount}"></td>-->
-<!--                <td th:text="${post.createDate}"></td>-->
-<!--                <td><a th:href="@{/posts/{id}/like (id=${post.id})}" role="button">좋아요</a></td>-->
-<!--                <td><a th:href="@{/posts/{id}/edit (id=${post.id})}" role="button">수정</a></td>-->
-<!--                <td><a th:href="@{/posts/{id}/delete (id=${post.id})}" role="button">삭제</a></td>-->
-<!--            </tr>-->
-<!--            </tbody>-->
-<!--        </table>-->
-
-
-<!--            <div class="col-lg-8 mb-5 mb-lg-0">-->
-        <div th:align="right">
-            <div th:if="${session.loginUser != null}">
-                <a href="/posts/new" class="genric-btn primary">게시물 작성</a>
-            </div>
-            <hr>
-        </div>
-
-        <div>
-            <th:block th:each="post : ${paging}">
-                <article class="blog_item">
-                    <div class="blog_item_img">
-                        <img class="card-img rounded-0" src="../../static/img/blog/single_blog_1.png" alt="">
-                        <a href="#" class="blog_item_date">
-                            <h3 th:text="${post.category}"></h3>
-                            <p th:text="${post.createDate}"></p>
-                        </a>
+            <div class="row">
+                <div class="col-6"  th:align="left">
+                    <a th:if="${session.loginUser != null}" href="/posts/new" class="genric-btn primary">게시물 작성</a>
+                </div>
+<!--                정렬 영역 -->
+                <div class="col-6"  th:align="right">
+                    <span>
+                    <button class="btn btn dropdown-toggle border" type="submit" id="dropdownMenuButtonCategory" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        카테고리 선택
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButtonCategory">
+                        <a class="dropdown-item" th:attr="onclick=|getPostList('?category=', this)|" th:text="전체"/>
+                        <th:block th:each="category : ${categories}">
+                            <a class="dropdown-item" th:attr="onclick=|getPostList('?category=*{category}', this)|" th:text="*{category}"/>
+                        </th:block>
                     </div>
-
-                    <div class="blog_details">
-                        <a class="d-inline-block" th:href="@{/posts/{id} (id=${post.id})}">
-                            <h2 th:text="${post.title}"></h2>
-                        </a>
-                        <ul class="blog-info-link">
-                            <li><a th:text="${post.authorNickName}"><i class="far fa-user"></i></a></li>
-                            <li><a><i class="far fa-eye" th:text="| 조회수 : ${post.viewCount}|"></i></a></li>
-
-    <!--                                    <li><a href="#"><i class="far fa-comments"></i> 03 Comments</a></li>-->
-
-                            <li><a><i class="far fa-heart" th:text="| 좋아요 : ${post.likeCount}|"></i></a></li>
-                            <div th:if="${session.loginUser != null}">
-                                <li><a role="button" th:onclick="'likePost(' + ${post.id} + ');'">좋아요</a></li>
-                                <div th:if="${session.loginUser.id == post.authorId}">
-                                    <li><a th:href="@{/posts/{id}/edit (id=${post.id})}" role="button">수정</a></li>
-                                    <li><a th:href="@{/posts/{id}/delete (id=${post.id})}" role="button">삭제</a></li>
-                                </div>
-                            </div>
-                        </ul>
+                </span>
+                    <span>
+                    <button class="btn btn dropdown-toggle border" type="submit" id="dropdownMenuButtonPagingSize" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        5개
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButtonPagingSize">
+                        <a class="dropdown-item" th:onclick="getPostList('?size=5', this)">5개</a>
+                        <a class="dropdown-item" th:onclick="getPostList('?size=10', this)">10개</a>
+                        <a class="dropdown-item" th:onclick="getPostList('?size=30', this)">30개</a>
                     </div>
-                </article>
-            </th:block>
+                </span>
+                    <span th:align="right">
+                    <button class="btn btn dropdown-toggle border" type="submit" id="dropdownMenuButtonSort" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        최신순
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButtonSort">
+                        <a class="dropdown-item" th:onclick="getPostList('?sort=createDate,desc&page=0', this)">최신순</a>
+                        <a class="dropdown-item" th:onclick="getPostList('?sort=viewCount,desc&page=0', this)">조회순</a>
+                        <a class="dropdown-item" th:onclick="getPostList('?sort=likeCount,desc&page=0', this)">좋아요순</a>
+                    </div>
+                </span>
+                </div>
 
-            <!-- 페이징 처리 시작 -->
-            <div th:if="${!paging.isEmpty()}">
-
-            <nav class="blog-pagination justify-content-center d-flex">
-                <ul class="pagination justify-content-center">
-                    <li class="page-item" th:classappend="${!paging.hasPrevious} ? 'disabled'">
-                        <a class="page-link"
-                           th:href="@{|?page=${paging.number-1}|}">
-                            <span>이전</span>
-                        </a>
-                    </li>
-                    <li th:each="page: ${#numbers.sequence(0, paging.totalPages-1)}"
-                        th:classappend="${page == paging.number} ? 'active'"
-                        class="page-item">
-                        <a th:text="${page + 1}" class="page-link" th:href="@{|?page=${page}|}"></a>
-                    </li>
-                    <li class="page-item" th:classappend="${!paging.hasNext} ? 'disabled'">
-                        <a class="page-link" th:href="@{|?page=${paging.number+1}|}">
-                            <span>다음</span>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
             </div>
-            <!-- 페이징 처리 끝-->
+        <hr>
+<!--        게시물 영역 시작 -->
+        <div class="posts-area">
         </div>
-<!--            </div>-->
-<!--            <div class="col-lg-4">-->
-<!--                <div class="blog_right_sidebar">-->
-<!--                    <aside class="single_sidebar_widget search_widget">-->
-<!--                        <form action="#">-->
-<!--                            <div class="form-group">-->
-<!--                                <div class="input-group mb-3">-->
-<!--                                    <input type="text" class="form-control" placeholder='Search Keyword'-->
-<!--                                           onfocus="this.placeholder = ''"-->
-<!--                                           onblur="this.placeholder = 'Search Keyword'">-->
-<!--                                    <div class="input-group-append">-->
-<!--                                        <button class="btn" type="button"><i class="ti-search"></i></button>-->
-<!--                                    </div>-->
-<!--                                </div>-->
-<!--                            </div>-->
-<!--                            <button class="button rounded-0 primary-bg text-white w-100 btn_1"-->
-<!--                                    type="submit">Search</button>-->
-<!--                        </form>-->
-<!--                    </aside>-->
+<!--        게시물 영역 끝-->
 
-<!--                    <aside class="single_sidebar_widget post_category_widget">-->
-<!--                        <h4 class="widget_title">Category</h4>-->
-<!--                        <ul class="list cat-list">-->
-<!--                            <li>-->
-<!--                                <a href="#" class="d-flex">-->
-<!--                                    <p>Resaurant food</p>-->
-<!--                                    <p>(37)</p>-->
-<!--                                </a>-->
-<!--                            </li>-->
-<!--                            <li>-->
-<!--                                <a href="#" class="d-flex">-->
-<!--                                    <p>Travel news</p>-->
-<!--                                    <p>(10)</p>-->
-<!--                                </a>-->
-<!--                            </li>-->
-<!--                            <li>-->
-<!--                                <a href="#" class="d-flex">-->
-<!--                                    <p>Modern technology</p>-->
-<!--                                    <p>(03)</p>-->
-<!--                                </a>-->
-<!--                            </li>-->
-<!--                            <li>-->
-<!--                                <a href="#" class="d-flex">-->
-<!--                                    <p>Product</p>-->
-<!--                                    <p>(11)</p>-->
-<!--                                </a>-->
-<!--                            </li>-->
-<!--                            <li>-->
-<!--                                <a href="#" class="d-flex">-->
-<!--                                    <p>Inspiration</p>-->
-<!--                                    <p>21</p>-->
-<!--                                </a>-->
-<!--                            </li>-->
-<!--                            <li>-->
-<!--                                <a href="#" class="d-flex">-->
-<!--                                    <p>Health Care (21)</p>-->
-<!--                                    <p>09</p>-->
-<!--                                </a>-->
-<!--                            </li>-->
-<!--                        </ul>-->
-<!--                    </aside>-->
-
-<!--                    <aside class="single_sidebar_widget popular_post_widget">-->
-<!--                        <h3 class="widget_title">Recent Post</h3>-->
-<!--                        <div class="media post_item">-->
-<!--                            <img src="img/post/post_1.png" alt="post">-->
-<!--                            <div class="media-body">-->
-<!--                                <a href="single-blog.html">-->
-<!--                                    <h3>From life was you fish...</h3>-->
-<!--                                </a>-->
-<!--                                <p>January 12, 2019</p>-->
-<!--                            </div>-->
-<!--                        </div>-->
-<!--                        <div class="media post_item">-->
-<!--                            <img src="img/post/post_2.png" alt="post">-->
-<!--                            <div class="media-body">-->
-<!--                                <a href="single-blog.html">-->
-<!--                                    <h3>The Amazing Hubble</h3>-->
-<!--                                </a>-->
-<!--                                <p>02 Hours ago</p>-->
-<!--                            </div>-->
-<!--                        </div>-->
-<!--                        <div class="media post_item">-->
-<!--                            <img src="img/post/post_3.png" alt="post">-->
-<!--                            <div class="media-body">-->
-<!--                                <a href="single-blog.html">-->
-<!--                                    <h3>Astronomy Or Astrology</h3>-->
-<!--                                </a>-->
-<!--                                <p>03 Hours ago</p>-->
-<!--                            </div>-->
-<!--                        </div>-->
-<!--                        <div class="media post_item">-->
-<!--                            <img src="img/post/post_4.png" alt="post">-->
-<!--                            <div class="media-body">-->
-<!--                                <a href="single-blog.html">-->
-<!--                                    <h3>Asteroids telescope</h3>-->
-<!--                                </a>-->
-<!--                                <p>01 Hours ago</p>-->
-<!--                            </div>-->
-<!--                        </div>-->
-<!--                    </aside>-->
-<!--                    <aside class="single_sidebar_widget tag_cloud_widget">-->
-<!--                        <h4 class="widget_title">Tag Clouds</h4>-->
-<!--                        <ul class="list">-->
-<!--                            <li>-->
-<!--                                <a href="#">project</a>-->
-<!--                            </li>-->
-<!--                            <li>-->
-<!--                                <a href="#">love</a>-->
-<!--                            </li>-->
-<!--                            <li>-->
-<!--                                <a href="#">technology</a>-->
-<!--                            </li>-->
-<!--                            <li>-->
-<!--                                <a href="#">travel</a>-->
-<!--                            </li>-->
-<!--                            <li>-->
-<!--                                <a href="#">restaurant</a>-->
-<!--                            </li>-->
-<!--                            <li>-->
-<!--                                <a href="#">life style</a>-->
-<!--                            </li>-->
-<!--                            <li>-->
-<!--                                <a href="#">design</a>-->
-<!--                            </li>-->
-<!--                            <li>-->
-<!--                                <a href="#">illustration</a>-->
-<!--                            </li>-->
-<!--                        </ul>-->
-<!--                    </aside>-->
-
-
-<!--                    <aside class="single_sidebar_widget instagram_feeds">-->
-<!--                        <h4 class="widget_title">Instagram Feeds</h4>-->
-<!--                        <ul class="instagram_row flex-wrap">-->
-<!--                            <li>-->
-<!--                                <a href="#">-->
-<!--                                    <img class="img-fluid" src="img/post/post_5.png" alt="">-->
-<!--                                </a>-->
-<!--                            </li>-->
-<!--                            <li>-->
-<!--                                <a href="#">-->
-<!--                                    <img class="img-fluid" src="img/post/post_6.png" alt="">-->
-<!--                                </a>-->
-<!--                            </li>-->
-<!--                            <li>-->
-<!--                                <a href="#">-->
-<!--                                    <img class="img-fluid" src="img/post/post_7.png" alt="">-->
-<!--                                </a>-->
-<!--                            </li>-->
-<!--                            <li>-->
-<!--                                <a href="#">-->
-<!--                                    <img class="img-fluid" src="img/post/post_8.png" alt="">-->
-<!--                                </a>-->
-<!--                            </li>-->
-<!--                            <li>-->
-<!--                                <a href="#">-->
-<!--                                    <img class="img-fluid" src="img/post/post_9.png" alt="">-->
-<!--                                </a>-->
-<!--                            </li>-->
-<!--                            <li>-->
-<!--                                <a href="#">-->
-<!--                                    <img class="img-fluid" src="img/post/post_10.png" alt="">-->
-<!--                                </a>-->
-<!--                            </li>-->
-<!--                        </ul>-->
-<!--                    </aside>-->
-
-
-<!--                    <aside class="single_sidebar_widget newsletter_widget">-->
-<!--                        <h4 class="widget_title">Newsletter</h4>-->
-
-<!--                        <form action="#">-->
-<!--                            <div class="form-group">-->
-<!--                                <input type="email" class="form-control" onfocus="this.placeholder = ''"-->
-<!--                                       onblur="this.placeholder = 'Enter email'" placeholder='Enter email' required>-->
-<!--                            </div>-->
-<!--                            <button class="button rounded-0 primary-bg text-white w-100 btn_1"-->
-<!--                                    type="submit">Subscribe</button>-->
-<!--                        </form>-->
-<!--                    </aside>-->
-<!--                </div>-->
-<!--            </div>-->
     </div>
 </section>
 <div th:replace="fragments/footer :: footer"/>
-<script>
+<script th:inline="javascript">
+    //게시물 불러오기
+    function getPostList(url_parameter, obj) {
+        //선택한 버튼에 따라 버튼 텍스트 변경
+        const sub_button_text =  $(obj).text();
+        const parent_button = $(obj).parent("div").parent("span").children("button");
+        parent_button.html(sub_button_text);
+
+        let url_params = new URLSearchParams(url_parameters);
+        const entries = new URLSearchParams(url_parameter).entries();
+
+        for (const entry of entries) {
+            url_params.set(entry[0], entry[1]);
+        }
+
+        url_parameters = "?" + url_params;
+
+        const url = "/posts/list" + url_parameters
+
+        console.log("확인", url);
+
+        $.ajax({
+            type:'GET',
+            url:url,
+            contentType: 'application/json',
+            success:function(data) {
+
+                var post_html = "";
+                var paging = data.paging;
+                var post_list = paging.content;
+                var count = post_list.length;
+
+                if(count > 0) {
+                    $.each(post_list, function (index, item) {
+                        post_html += getPost(index, item);
+                    });
+
+                    post_html += getPaging(data);
+
+                }
+                else {
+                    post_html = "<div>등록된 게시글이 없습니다.</div>";
+                }
+
+                $(".posts-area").html(post_html);
+
+
+            },
+            error:function(){
+                alert('통신실패');
+            }
+        });
+    }
+
+    function getPost(index, item) {
+
+        var post_html = "";
+
+        if (item != null) {
+
+            var category = item.category;
+            var createDate = item.createDate;
+            var post_id = item.id;
+            var title = item.title;
+            var author_nickname = item.authorNickName;
+            var view_count = item.viewCount;
+            var like_count = item.likeCount;
+            var author_id = item.authorId;
+
+            post_html += "<article class='blog_item'>";
+            //사진영역
+            post_html += "<div class='blog_item_img'>";
+            post_html += "<img class='card-img rounded-0' src='../../static/img/blog/single_blog_1.png' alt=''>";
+            post_html += "<a href='#' class='blog_item_date'>";
+            post_html += "<h3>" + category + "</h3>";
+            post_html += "<p>" + createDate + "</p>";
+            post_html += "</a>"
+            post_html += "</div>"
+
+            //세부영역
+            post_html += "<div class='blog_details'>";
+            post_html += "<a class='d-inline-block' href='/posts/" + post_id  + "'>";
+            post_html += "<h2>" + title + "</h2>";
+            post_html += ""
+            post_html += "</a>";
+            post_html += "<ul class='blog-info-link'>"
+            post_html += "<li><a>" + author_nickname + "<i class='far fa-user'></i></a></li>"
+            post_html += "<li><a><i class='far fa-eye'>조회수 : " + view_count + "</i></a></li>"
+            post_html += "<li><a><i class='far fa-heart'>좋아요 : "  + like_count + "</i></a></li>"
+            //세션처리
+            post_html += "<li><a role='button' onclick='likePost(" + post_id + ")'>좋아요</a></li>"
+            post_html += "<li><a href='/posts/" + post_id + "/edit' role='button'>수정</a></li>"
+            post_html += "<li><a href='/posts/" + post_id + "/delete' role='button'>삭제</a></li>"
+            //세션처리
+            post_html += "</ul>";
+            post_html += "</div>";
+
+            post_html += "</article>";
+        }
+
+        return post_html;
+    }
+
+    function getPaging(data) {
+        var paging_html = "";
+        var paging = data.paging;
+        var searchKeyword = data.searchKeyword;
+        var sortValue = data.sortValue;
+
+        if (searchKeyword == undefined) {
+            searchKeyword = null;
+        }
+
+        //페이징 영역 시작
+        if (!data.empty) {
+
+            var paging_number = paging.number;
+            var paging_size = paging.size;
+            var total_pages = paging.totalPages;
+            console.log("몇번째", paging_number, paging_size);
+
+            paging_html += "<nav class='blog-pagination justify-content-center d-flex'>";
+            paging_html += "<ul class='pagination justify-content-center'>";
+
+            //이전버튼
+            if (paging_number != 0) {
+                paging_html += "<li class='page-item'>";
+                // var criteria = "?page=" + (paging_number - 1) + "&size=" + paging_size + "&searchKeyword=" + searchKeyword + "&sort=" + sortValue;
+                var criteria = "?page=" + (paging_number - 1);
+                paging_html += "<a class='page-link' onclick='getPostList(" + "\"" + criteria + "\"" + ")'" + ">";
+                // paging_html += "<a class='page-link' onclick='getPostList(" + "\"" + "page" + "\"" + "," + criteria + ")'&size=" + paging_size + "&searchKeyword=" + searchKeyword + "&sort=" + sortValue + "'>";
+                paging_html += "<span>이전</span>";
+                paging_html += "</a>";
+            }
+
+            //페이지 넘버링
+            for (var i = 0; i < total_pages; i++) {
+                var criteria = "?page=" + i;
+                paging_html += "<li><a class='page-link' onclick='getPostList(" + "\"" + criteria + "\"" + ")'" + ">" + (i + 1) + "</a></li>";
+            }
+
+            //다음버튼
+            if (paging_number != total_pages - 1) {
+                paging_html += "<li class='page-item'>";
+                var criteria = "?page=" + (paging_number + 1);
+                // paging_html += "<a class='page-link' onclick='getPostList(" + "\"" + criteria + "\"" + ")'&size=" + paging_size + "&searchKeyword=" + searchKeyword + "&sort=" + sortValue + "'>";
+                paging_html += "<a class='page-link' onclick='getPostList(" + "\"" + criteria + "\"" + ")'" + ">";
+                paging_html += "<span>다음</span>";
+                paging_html += "</a>";
+            }
+
+            paging_html += "</ul>";
+            paging_html += "</nav>";
+
+        }
+
+
+        return paging_html;
+    }
+
     //게시물 좋아요
     function likePost(post_id) {
         $.ajax({
@@ -309,12 +231,19 @@
                     alert('로그인 이후 이용해주시기 바랍니다.');
                     console.log('게시물 좋아요 실패');
                 }
+
+                getPostList();
             },
             error:function(){
                 alert('통신실패');
             }
         });
     }
+
+    //url에서 파라미터만을 가져옴
+    var url_parameters = window.location.search;
+    getPostList(url_parameters);
+
 </script>
 </body>
 </html>

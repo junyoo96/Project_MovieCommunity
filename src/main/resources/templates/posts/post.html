@@ -27,15 +27,18 @@
                 </div>
             </div>
             <br>
-            <div class="form-group" th:align="right" th:if="${session.loginUser.id == post.authorId}">
-                <a class="button button-contactForm btn_1" th:href="@{/posts/{id}/edit (id=${post.id})}">게시글 수정</a>
-                <a class="button button-contactForm btn_1" th:href="@{/posts/{id}/delete (id=${post.id})}">게시글 삭제</a>
+            <div th:if="${session.loginUser != null}">
+                <div class="form-group" th:align="right" th:if="${session.loginUser.id == post.authorId}">
+                    <a class="button button-contactForm btn_1" th:href="@{/posts/{id}/edit (id=${post.id})}">게시글 수정</a>
+                    <a class="button button-contactForm btn_1" th:href="@{/posts/{id}/delete (id=${post.id})}">게시글 삭제</a>
+                </div>
             </div>
+
 
             <div class="comment-form">
                 <h4>댓글 쓰기</h4>
                 <form class="form-contact comment_form" action="#" id="commentForm">
-                    <input type="hidden" id="comment-writer-id" th:value="${session.loginUser.id}">
+                    <input type="hidden" id="comment-writer-id" th:if="${session.loginUser != null}" th:value="${session.loginUser.id}">
                     <div class="row">
                         <div class="col-12">
                             <div class="form-group">

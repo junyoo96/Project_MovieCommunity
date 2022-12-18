@@ -39,7 +39,7 @@
                                     </li>
                                 </ul>
 
-                                <aside class="single_sidebar_widget search_widget">
+                                <aside class="single_sidebar_widget search_widget" th:style="${'margin-top: 15px'}">
                                     <form th:action="@{/posts}" method="GET">
                                         <div class="form-group">
                                             <div class="input-group mb-3">
@@ -59,8 +59,11 @@
 <!--                            <a sec:authorize="isAuthenticated()" href="/login" class="btn_1 d-none d-lg-block">로그인</a>-->
 
                             <div th:if="${session.loginUser eq null}">
-                                <a th:href="@{/members/new}" class="btn_1 d-none d-lg-block">회원가입</a>
-                                <a th:href="@{/login}" class="btn_1 d-none d-lg-block">로그인</a>
+                                    <a th:href="@{/members/new}" class="btn_1 d-none d-block" th:style="${'margin-right: 5px'}">회원가입</a>
+                            </div>
+                            <div th:if="${session.loginUser eq null}">
+                                <a th:href="@{/login}" class="btn_1 d-none d-block">로그인</a>
+
                             </div>
                             <div th:unless="${session.loginUser eq null}">
                                 <span th:text="|${session.loginUser.nickname} 님|"></span>
