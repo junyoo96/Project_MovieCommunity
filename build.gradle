@@ -55,6 +55,9 @@ dependencies {
 	testImplementation("org.junit.vintage:junit-vintage-engine") {
 		exclude group : "org.hamcrest", module: "hamcrest-core"
 	}
+
+	//Mysql 추가
+	implementation 'mysql:mysql-connector-java'
 }
 
 //querydsl 추가 시작
