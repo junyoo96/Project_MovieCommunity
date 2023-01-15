@@ -32,6 +32,7 @@ public class LoginController {
     @PostMapping("/login")
     public String login(@Valid @ModelAttribute LoginForm form, BindingResult bindingResult, @RequestParam(defaultValue = "/") String redirectURL, HttpServletRequest request) {
         log.info("로그인");
+
         if (bindingResult.hasErrors()) {
             return "login/loginForm";
         }
@@ -39,7 +40,7 @@ public class LoginController {
         UserDto loginUser = loginService.login(form.getLoginId(), form.getPassword());
 
         if (loginUser == null) {
-            bindingResult.reject("loginFail", "아이디 또는 비밀번호가 틀립니다");
+            bindingResult.reject("loginFail", "아이디 또는 비밀번호가 존재하지 않거나 틀립니다");
             return "login/loginForm";
         }
 

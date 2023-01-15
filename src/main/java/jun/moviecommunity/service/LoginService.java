@@ -17,6 +17,11 @@ public class LoginService {
     public UserDto login(String loginId, String password) {
         //패스워드 비교해서 같으면 user, 아니면 null 반환
         User loginUser = userRepository.findByLoginId(loginId).filter(u -> u.getPassword().equals(password)).orElse(null);
+
+        if (loginUser == null) {
+            return null;
+        }
+
         return new UserDto(loginUser);
     }
 }
