@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
@@ -49,8 +48,6 @@ public class LoginController {
         session.setAttribute(SessionConst.LOGIN_USER, loginUser);
 
         return "redirect:" + redirectURL;
-        //테스트 할 때 사용
-        //        return "home";
     }
 
     /**
@@ -59,6 +56,7 @@ public class LoginController {
     @PostMapping("/logout")
     public String logout(HttpServletRequest request) {
         log.info("로그아웃");
+
         //false로 해야 session이 없을 때 신규 세션을 생성안함
         HttpSession session = request.getSession(false);
         if (session != null) {
@@ -66,8 +64,6 @@ public class LoginController {
             session.invalidate();
         }
 
-        //TODO - 테스트 때문에 바꿈
-//        return "redirect:/";
         return "home";
     }
 }
