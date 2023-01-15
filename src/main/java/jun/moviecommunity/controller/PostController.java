@@ -82,7 +82,6 @@ public class PostController {
         ));
 
         //TODO-등록중에 지워진 사진은 주기적으로 File 테이블에서 post_id가 null인것 제거하는식으로 처리
-
         return "redirect:/posts";
     }
 
@@ -99,7 +98,6 @@ public class PostController {
             String fileSize = request.getHeader("file-size");
 
             FileDto fileDto = new FileDto(fileName, fileType, fileSize);
-            log.info("파일원본이름" + fileName);
 
             //AWS에 이미지 저장
             Map<String, String> fileInfo = s3Service.upload(inputStream, fileDto);
@@ -116,166 +114,7 @@ public class PostController {
         } catch (Exception e) {
 
         }
-
-//        System.out.println("들어왔습니다");
-//        try {
-//            //파일정보
-//            String sFileInfo = "";
-//            //파일명을 받는다 - 일반 원본파일명
-//            String sFilename = request.getHeader("file-name");
-//            System.out.println("파일이름" + sFilename);
-//            //파일 확장자
-//            String sFilenameExt = sFilename.substring(sFilename.lastIndexOf(".")+1);
-//            //확장자를소문자로 변경
-//            sFilenameExt = sFilenameExt.toLowerCase();
-//
-//            //이미지 검증 배열변수
-//            String[] allowFileArr = {"jpg","png","bmp","gif"};
-//
-//            //확장자 체크
-//            int nCnt = 0;
-//            for(int i=0; i<allowFileArr.length; i++) {
-//                if(sFilenameExt.equals(allowFileArr[i])){
-//                    nCnt++;
-//                }
-//            }
-//
-//            //이미지가 아니라면
-//            if(nCnt == 0) {
-//                PrintWriter print = response.getWriter();
-//                print.print("NOTALLOW_"+sFilename);
-//                print.flush();
-//                print.close();
-//            } else {
-//                //디렉토리 설정 및 업로드
-//
-//                //파일경로
-//                String filePath = "src/uploadimage/";
-//                File file = new File(filePath);
-//
-//                if(!file.exists()) {
-//                    file.mkdirs();
-//                }
-//
-//                String sRealFileNm = "";
-//                SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
-//                String today= formatter.format(new java.util.Date());
-//                sRealFileNm = today+ UUID.randomUUID().toString() + sFilename.substring(sFilename.lastIndexOf("."));
-//                String rlFileNm = filePath + sRealFileNm;
-//                System.out.println("rlFileNm = " + rlFileNm);
-//
-////                ///////////////// 서버에 파일쓰기 /////////////////
-//                InputStream inputStream = request.getInputStream();
-////                OutputStream outputStream=new FileOutputStream(rlFileNm);
-////                int numRead;
-////                byte bytes[] = new byte[Integer.parseInt(request.getHeader("file-size"))];
-////                while((numRead = inputStream.read(bytes,0,bytes.length)) != -1){
-////                    outputStream.write(bytes,0,numRead);
-////                }
-////                if(inputStream != null) {
-////                    inputStream.close();
-////                }
-////                outputStream.flush();
-////                outputStream.close();
-//
-//                // AWS에 파일 저장
-////                for(MultipartFile multipartFile: multipartFileList) {
-//
-//                System.out.println("AWS 시작");
-//                List<MultipartFile> imgFiles = new ArrayList<>();
-//                Map<String, MultipartFile> fileMap = new HashMap<>();
-//                System.out.println("request.getClass() = " + request.getClass());
-////                if(request instanceof MultipartHttpServletRequest) {
-////                    System.out.println("ASW 진행중");
-////                    MultipartHttpServletRequest req = (MultipartHttpServletRequest) request;
-////                    fileMap = req.getFileMap();
-////                    fileMap.forEach((key, value) -> {
-////                        imgFiles.add(value);
-////                    });
-////                } else {
-//////                    model.addAttribute("result", HttpStatus.BAD_REQUEST);
-////                }
-////
-////                List<String> imagePathList = new ArrayList<>();
-////                if(imgFiles.size() > 0) {
-////                    MultipartFile multipartFile = imgFiles.get(0);
-////
-////                    String originalName = multipartFile.getOriginalFilename(); // 파일 이름
-////                    long size = multipartFile.getSize(); // 파일 크기
-////
-////                    ObjectMetadata objectMetaData = new ObjectMetadata();
-////                    objectMetaData.setContentType(multipartFile.getContentType());
-////                    objectMetaData.setContentLength(size);
-
-
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-
-//        List<MultipartFile> imgFiles = new ArrayList<>();
-
-//        Map<String, MultipartFile> fileMap = new HashMap<>();
-//        if(request instanceof MultipartHttpServletRequest) {
-//            MultipartHttpServletRequest req = (MultipartHttpServletRequest) request;
-//            fileMap = req.getFileMap();
-//            System.out.println("안녕" + fileMap);
-//            fileMap.forEach((key, value) -> {
-//                System.out.println("무슨값");
-//                System.out.println(value);
-//                imgFiles.add(value);
-//            });
-//        } else {
-//            model.addAttribute("result", HttpStatus.BAD_REQUEST);
-//        }
-//
-//        if(imgFiles.size() > 0) {
-//            System.out.println("이미지파일 있음");
-//            MultipartFile imgFile = imgFiles.get(0);
-//            try {
-//                SmartEditor result = postService.singleImageUpload(imgFile);
-//
-//                model.addAttribute("sFileURL", result.getSFileURL());
-//                model.addAttribute("sFileName", result.getSFileName());
-//                model.addAttribute("result", HttpStatus.OK);
-//            } catch(Exception e) {
-//                System.out.println("e.getMessage() = " + e.getMessage());
-//                model.addAttribute("result", HttpStatus.BAD_REQUEST);
-//            }
-//        } else {
-//            model.addAttribute("result", HttpStatus.BAD_REQUEST);
-//        }
-//
-//        return new MappingJackson2JsonView();
     }
-
-//    /**
-//     * 게시물 전체 조회 - 페이징 적용 - 레거시
-//    **/
-//    @GetMapping("/posts")
-//    public String list(Model model, @PageableDefault(size = pagingSize, sort = "createDate", direction = Sort.Direction.DESC) Pageable pageable, String searchKeyword, Category category) {
-//
-//        Page<PostDto> pagingList = null;
-//
-//        log.info("확인확인 {} {}", pageable.getPageSize(), pageable.getSort());
-//
-//        if ((searchKeyword == null || searchKeyword.equals("null")) && category == null) {
-//            pagingList = postService.findPosts(pageable);
-//        }
-//        else {
-//            pagingList = postService.findPostsByTitleOrContent(searchKeyword, pageable);
-//        }
-//
-//        String sortValue = pagingList.getSort().toString().replace(": ", ",");
-//        log.info("함보자 {} {} {} 새거 {} {}", searchKeyword, pagingList.getSort(), pagingList.getSize(), pagingList.getPageable().getSort(), sortValue);
-//
-//        List<String> categories = Stream.of(Category.values()).map(Enum::name).collect(Collectors.toList());
-//
-//        model.addAttribute("paging", pagingList);
-//        model.addAttribute("searchKeyword", searchKeyword); //검색어
-//        model.addAttribute("sortValue", sortValue); //정렬 기준
-//        model.addAttribute("categories", categories); //카테고리
-//        return "posts/postList";
-//    }
 
     /**
      * 게시물 전체 조회 페이지
@@ -328,7 +167,6 @@ public class PostController {
         log.info("게시물 수정");
 
         //게시물 유효성 검사
-        log.info("null임 {} {} {}", postUpdateValidator, form, result);
         postUpdateValidator.validate(form, result);
 
         if(result.hasErrors()) {

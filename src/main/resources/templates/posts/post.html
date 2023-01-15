@@ -34,7 +34,6 @@
                 </div>
             </div>
 
-
             <div class="comment-form">
                 <h4>댓글 쓰기</h4>
                 <form class="form-contact comment_form" action="#" id="commentForm">
@@ -146,7 +145,6 @@ function insertReply(comment_id) {
     });// 댓글 비동기 끝
 }
 
-
 //댓글 조회
 function getCommentList() {
 
@@ -156,10 +154,6 @@ function getCommentList() {
         "/comments/list/"+postId,
         function(data) {
             var count = data.length;
-            var list = data.list;
-
-            console.log("댓글 갖고오기", postId, count);
-
             var comment_html = "<div class='comment-list'>";
 
             if(count > 0){
@@ -207,7 +201,6 @@ function getComment(idx, data) {
             comment_html += "<h5><a href='#'>" + writer +"</a></h5>"
             comment_html += "<p class='date'>" + createDate + "</p>"
             comment_html += "<p class='date'>" + "좋아요 수 : " + likeCount + "</p>"
-            // comment_html += "<a class='btn-reply text-uppercase' onclick='updateComment(" + id + ","+  "\"" + content + "\"" + ")'>수정</a>"
 
             if(loginUserId != null && loginUserId == commentAuthorId) {
                 comment_html += "<a class='btn-reply text-uppercase' data-toggle='collapse' data-target='#multi-collapse-" + commentId + "'>수정</a>"
@@ -216,7 +209,6 @@ function getComment(idx, data) {
 
             comment_html += "<a class='btn-reply text-uppercase' onclick='likeComment(" + commentId + ")'>좋아요</a>"
             comment_html += "</div>"
-
             comment_html += "<p class='comment'>" + content + "</p>"
 
             //댓글 수정 영역
@@ -228,7 +220,6 @@ function getComment(idx, data) {
                             "</form>";
 
             comment_html += "<div className='d-flex justify-content-between'>"
-
             comment_html += "<div class='reply-btn'>"
 
             if (children.length > 0) {
@@ -243,7 +234,6 @@ function getComment(idx, data) {
                             "<input type='hidden' id='id' value='" + commentId + "'>" +
                             "<div className='form-group'> <textarea className='form-control' id='reply-content-" + commentId + "' rows='2' cols='80'></textarea></div>" +
                             "<a id='btn-comment-update' className='btn btn-outline-primary bi bi-pencil-square' onclick='insertReply(" + commentId + ")'>작성</a>" +
-                            // "<button type='button' id='btn-comment-update' className='btn btn-outline-primary bi bi-pencil-square' onclick='updateComment(" + id + ","+  "\"" + content + "\"" + ")'>수정</button>" +
                             "</form>";
 
             if (children.length > 0) {
@@ -262,7 +252,6 @@ function getComment(idx, data) {
     }
 
     return comment_html
-
 }
 
 //댓글 수정
