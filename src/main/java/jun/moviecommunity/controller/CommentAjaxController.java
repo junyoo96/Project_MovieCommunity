@@ -24,7 +24,7 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-public class CommentController {
+public class CommentAjaxController {
 
     private final CommentService commentService;
 
@@ -43,22 +43,26 @@ public class CommentController {
         commentService.saveComment(createCommentRequest.getUserId(), createCommentRequest.getPostId(), createCommentRequest.getContent());
         return ResponseEntity.ok(HttpStatus.OK);
     }
-
+    
     /**
      * 댓글 조회
-    **/
+     **/
     @GetMapping("/comments/list/{postId}")
-    public List<CommentDto> list(@PathVariable("postId") Long postId) {
+    public Map<String, Object> list(@PathVariable("postId") Long postId) {
         List<Comment> comments = commentService.findCommentsByPostId(postId);
 
-        List<CommentDto> result = new ArrayList<>();
+        List<CommentDto> commentDtoList = new ArrayList<>();
         Map<Long, CommentDto> map = new HashMap<>();
         comments.stream().forEach(c -> {
             CommentDto dto = new CommentDto(c);
             map.put(dto.getId(), dto);
             if (c.getParent()!=null) map.get(c.getParent().getId()).getChildren().add(dto);
-            else result.add(dto);
+            else commentDtoList.add(dto);
         });
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("comments", commentDtoList);
+        result.put("counts", comments.size());
 
         return result;
     }

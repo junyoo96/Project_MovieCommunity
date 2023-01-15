@@ -153,13 +153,17 @@ function getCommentList() {
     $.getJSON(
         "/comments/list/"+postId,
         function(data) {
-            var count = data.length;
+            //var count = data.length;
+            var count = data.counts;
+            var comments = data.comments;
+
+
             var comment_html = "<div class='comment-list'>";
 
             if(count > 0){
                 $('#count').html(count + " 댓글");
 
-                $.each(data, function(index, item) {
+                $.each(comments, function(index, item) {
                     comment_html += getComment(index, item);
                     comment_html += "<br>"
                 });
