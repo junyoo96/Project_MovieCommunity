@@ -11,7 +11,7 @@
     <div class="container">
             <div class="row">
                 <div class="col-6"  th:align="left">
-                    <a th:if="${session.loginUser != null}" href="/posts/new" class="genric-btn primary">게시물 작성</a>
+                    <a th:if="${session.loginUser != null}" href="/posts/new" class="button button-contactForm btn_1">게시물 작성</a>
                 </div>
 <!--                정렬 영역 -->
                 <div class="col-6"  th:align="right">
@@ -125,7 +125,6 @@
             var author_nickname = item.authorNickName;
             var view_count = item.viewCount;
             var like_count = item.likeCount;
-            var author_id = item.authorId;
 
             post_html += "<article class='blog_item'>";
             //사진영역
@@ -165,7 +164,6 @@
         var paging_html = "";
         var paging = data.paging;
         var searchKeyword = data.searchKeyword;
-        var sortValue = data.sortValue;
 
         if (searchKeyword == undefined) {
             searchKeyword = null;
@@ -185,10 +183,8 @@
             //이전버튼
             if (paging_number != 0) {
                 paging_html += "<li class='page-item'>";
-                // var criteria = "?page=" + (paging_number - 1) + "&size=" + paging_size + "&searchKeyword=" + searchKeyword + "&sort=" + sortValue;
                 var criteria = "?page=" + (paging_number - 1);
                 paging_html += "<a class='page-link' onclick='getPostList(" + "\"" + criteria + "\"" + ")'" + ">";
-                // paging_html += "<a class='page-link' onclick='getPostList(" + "\"" + "page" + "\"" + "," + criteria + ")'&size=" + paging_size + "&searchKeyword=" + searchKeyword + "&sort=" + sortValue + "'>";
                 paging_html += "<span>이전</span>";
                 paging_html += "</a>";
             }
@@ -203,7 +199,6 @@
             if (paging_number != total_pages - 1) {
                 paging_html += "<li class='page-item'>";
                 var criteria = "?page=" + (paging_number + 1);
-                // paging_html += "<a class='page-link' onclick='getPostList(" + "\"" + criteria + "\"" + ")'&size=" + paging_size + "&searchKeyword=" + searchKeyword + "&sort=" + sortValue + "'>";
                 paging_html += "<a class='page-link' onclick='getPostList(" + "\"" + criteria + "\"" + ")'" + ">";
                 paging_html += "<span>다음</span>";
                 paging_html += "</a>";
