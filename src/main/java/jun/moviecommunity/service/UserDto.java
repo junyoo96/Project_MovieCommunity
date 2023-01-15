@@ -1,7 +1,6 @@
 package jun.moviecommunity.service;
 
 import jun.moviecommunity.domain.User;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data

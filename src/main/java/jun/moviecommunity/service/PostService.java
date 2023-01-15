@@ -2,7 +2,6 @@ package jun.moviecommunity.service;
 
 import jun.moviecommunity.controller.PostSearchCondition;
 import jun.moviecommunity.controller.SmartEditor;
-import jun.moviecommunity.domain.Category;
 import jun.moviecommunity.domain.File;
 import jun.moviecommunity.domain.Post;
 import jun.moviecommunity.domain.User;
@@ -13,7 +12,6 @@ import jun.moviecommunity.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

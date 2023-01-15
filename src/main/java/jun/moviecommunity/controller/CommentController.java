@@ -3,11 +3,11 @@ package jun.moviecommunity.controller;
 import jun.moviecommunity.domain.Comment;
 import jun.moviecommunity.service.CommentDto;
 import jun.moviecommunity.service.CommentService;
-import lombok.*;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,9 +17,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.*;
 
 //참고 : https://devofroad.tistory.com/59
 //https://memostack.tistory.com/245

@@ -18,8 +18,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import static jun.moviecommunity.domain.QPost.*;
-import static org.springframework.util.StringUtils.*;
+import static jun.moviecommunity.domain.QPost.post;
 
 @Slf4j
 @Repository
