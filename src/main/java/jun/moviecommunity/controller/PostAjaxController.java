@@ -13,10 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @RestController
 @RequiredArgsConstructor
@@ -42,7 +39,6 @@ public class PostAjaxController {
         }
 
         String sortValue = pagingList.getSort().toString().replace(": ", ",");
-        List<String> categories = Stream.of(Category.values()).map(Enum::name).collect(Collectors.toList());
 
         Map<String, Object> result = new HashMap<>();
         result.put("paging", pagingList);

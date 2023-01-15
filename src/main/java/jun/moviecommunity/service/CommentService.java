@@ -47,7 +47,6 @@ public class CommentService {
      * 게시글별 댓글 조회
     **/
     public List<Comment> findCommentsByPostId(Long postId) {
-//        return commentRepository.findAllByPostId(postId);
         return commentCustomRepository.findAllByPostId(postId);
     }
 

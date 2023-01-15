@@ -31,8 +31,6 @@ public class Comment extends BaseTimeEntity{
     //REF : 댓글끼리 묶는 기능
     //RE_STEP : 순서 나타내기
     //RE_LEVEL : 들여쓰기 몇번할지
-//    @Enumerated(value = EnumType.STRING)
-//    private DeleteStatus isDeleted;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
     private Comment parent;

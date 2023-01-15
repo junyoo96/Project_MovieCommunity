@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -114,14 +113,8 @@ public class PostService {
      * Amazon S3에 이미지 저장
     **/
     public SmartEditor singleImageUpload(MultipartFile imgFile) {
-        LocalDate today = LocalDate.now();
-
         String fileName = imgFile.getOriginalFilename();
-        System.out.println("사진이름");
-        System.out.println(fileName);
-        String filePath = "static/images/" + String.format("%02", today.getMonthValue()) + "/";
         String fileUrl = "s3url";
-
         SmartEditor smartEditor = new SmartEditor(fileUrl, fileName, "true");
 
         return smartEditor;

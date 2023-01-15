@@ -12,11 +12,4 @@ public class MoviecommunityApplication {
 		SpringApplication.run(MoviecommunityApplication.class, args);
 	}
 
-//	//Auditing
-//	@Bean
-//	public AuditorAware<String> auditorProvider(HttpSession session) {
-//		UserDto userDto = (UserDto) session.getAttribute(SessionConst.LOGIN_USER);
-//		return () -> Optional.of(String.valueOf(userDto.getId()));
-//	}
-
 }

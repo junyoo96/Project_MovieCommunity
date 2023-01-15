@@ -50,7 +50,7 @@ public class S3Service {
         log.info("aws3에서 준 keyname" + filePath);
         imagePathList.add(filePath);
 
-        ///////////////// 이미지 /////////////////
+        //이미지 처리 부분
         String sFileInfo = "";
 
         // 정보 출력
