@@ -72,7 +72,6 @@ public class S3Service {
             ArrayList<DeleteObjectsRequest.KeyVersion> keys = new ArrayList<DeleteObjectsRequest.KeyVersion>();
 
             for (String fileName : fileNames) {
-                log.info("삭제할때갖고온이름 : " + fileName);
                 keys.add(new DeleteObjectsRequest.KeyVersion(fileName));
             }
 
@@ -80,15 +79,10 @@ public class S3Service {
                     .withKeys(keys)
                     .withQuiet(false);
             DeleteObjectsResult delObjRes = amazonS3Client.deleteObjects(multiObjectDeleteRequest);
-            int successfulDeletes = delObjRes.getDeletedObjects().size();
-            log.info(successfulDeletes + " objects successfully deleted.");
+//            int successfulDeletes = delObjRes.getDeletedObjects().size();
         } catch (AmazonServiceException e) {
-            // The call was transmitted successfully, but Amazon S3 couldn't process
-            // it, so it returned an error response.
             e.printStackTrace();
         } catch (SdkClientException e) {
-            // Amazon S3 couldn't be contacted for a response, or the client
-            // couldn't parse the response from Amazon S3.
             e.printStackTrace();
         }
     }

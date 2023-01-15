@@ -34,34 +34,21 @@ public class PostAjaxController {
 
         Page<PostDto> pagingList = null;
 
-        log.info("확인확인 {} {}", pageable.getPageSize(), pageable.getSort());
-
         if ((searchKeyword == null || searchKeyword.equals("null")) && category == null) {
-            log.info("그냥 검색");
             pagingList = postService.findPosts(pageable);
         }
         else {
-            log.info("검색 {} {}", searchKeyword, category);
-//            pagingList = postService.findPostsByTitleOrContent(searchKeyword, pageable);
             pagingList = postService.findPostsByCriteria(new PostSearchCondition(searchKeyword, category), pageable);
         }
 
         String sortValue = pagingList.getSort().toString().replace(": ", ",");
         List<String> categories = Stream.of(Category.values()).map(Enum::name).collect(Collectors.toList());
 
-//        model.addAttribute("paging", pagingList);
-//        model.addAttribute("searchKeyword", searchKeyword); //검색어
-//        model.addAttribute("sortValue", sortValue); //정렬 기준
-//        model.addAttribute("categories", categories); //카테고리
-
         Map<String, Object> result = new HashMap<>();
         result.put("paging", pagingList);
         result.put("sortValue", sortValue);
         result.put("searchKeyword", searchKeyword);
-//        result.put("")
 
         return result;
     }
-
-
 }

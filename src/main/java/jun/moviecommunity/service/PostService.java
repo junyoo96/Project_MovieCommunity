@@ -2,7 +2,6 @@ package jun.moviecommunity.service;
 
 import jun.moviecommunity.controller.PostSearchCondition;
 import jun.moviecommunity.controller.SmartEditor;
-import jun.moviecommunity.domain.File;
 import jun.moviecommunity.domain.Post;
 import jun.moviecommunity.domain.User;
 import jun.moviecommunity.repository.CommentRepository;
@@ -50,9 +49,6 @@ public class PostService {
     /**
      * 게시글 전체 조회
     **/
-//    public Page<PostDto> findPosts(Pageable pageable) {
-//        return postRepository.findAll(pageable).map(PostDto::new);
-//    }
     public Page<PostDto> findPosts(Pageable pageable) {
         return postRepository.findAll(pageable).map(PostDto::new);
     }
@@ -82,13 +78,7 @@ public class PostService {
     @Transactional
     public Post updatePost(UpdatePostRequest request){
         Post post = postRepository.findById(request.getId()).get();
-        for (File file: request.getFiles()) {
-            log.info("수정직전요청" + file.getFileName());
-        }
         post.change(request.getTitle(), request.getContent(), request.getCategory(), request.getFiles());
-        for (File file: post.getFiles()) {
-            log.info("수정직전" + file.getFileName());
-        }
         return post;
     }
 
@@ -100,13 +90,6 @@ public class PostService {
         commentRepository.deleteAllByPostId(postId);
         postRepository.deleteById(postId);
     }
-
-//    /**
-//     * 게시글 검색
-//    **/
-//    public Page<Post> searchByKeyword(String keyword, PageRequest pageRequest) {
-//        return postRepository.findAllByTitleOrContent(keyword, pageRequest);
-//    }
 
     /**
      * 게시물 방문
@@ -137,8 +120,6 @@ public class PostService {
         System.out.println("사진이름");
         System.out.println(fileName);
         String filePath = "static/images/" + String.format("%02", today.getMonthValue()) + "/";
-        //나중에 구현
-//        String fileUrl = S3IamgeUpload(imgFile, filePath);
         String fileUrl = "s3url";
 
         SmartEditor smartEditor = new SmartEditor(fileUrl, fileName, "true");

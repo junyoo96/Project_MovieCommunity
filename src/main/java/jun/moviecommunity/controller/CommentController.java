@@ -50,6 +50,7 @@ public class CommentController {
     @GetMapping("/comments/list/{postId}")
     public List<CommentDto> list(@PathVariable("postId") Long postId) {
         List<Comment> comments = commentService.findCommentsByPostId(postId);
+
         List<CommentDto> result = new ArrayList<>();
         Map<Long, CommentDto> map = new HashMap<>();
         comments.stream().forEach(c -> {
@@ -96,26 +97,6 @@ public class CommentController {
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
-    /**
-     * 댓글 등록 DTO
-    **/
-    @Data
-    static class CreateCommentRequest {
-        private Long postId;
-        private Long userId;
-
-        @NotBlank
-        private String content;
-    }
-
-    /**
-     * 댓글 수정 DTO
-    **/
-    @Data
-    static class UpdateCommentRequest {
-        @NotBlank
-        private String content;
-    }
 
     /**
      * 대댓글 등록
@@ -130,6 +111,27 @@ public class CommentController {
         //대댓글 저장
         commentService.saveReply(createReplyRequest.getUserId(), createReplyRequest.getPostId(), createReplyRequest.getCommentId(), createReplyRequest.getContent());
         return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    /**
+     * 댓글 등록 DTO
+     **/
+    @Data
+    static class CreateCommentRequest {
+        private Long postId;
+        private Long userId;
+
+        @NotBlank
+        private String content;
+    }
+
+    /**
+     * 댓글 수정 DTO
+     **/
+    @Data
+    static class UpdateCommentRequest {
+        @NotBlank
+        private String content;
     }
 
     /**
