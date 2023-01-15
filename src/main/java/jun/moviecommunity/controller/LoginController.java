@@ -1,9 +1,7 @@
 package jun.moviecommunity.controller;
 
-import jun.moviecommunity.domain.User;
 import jun.moviecommunity.service.LoginService;
 import jun.moviecommunity.service.UserDto;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;

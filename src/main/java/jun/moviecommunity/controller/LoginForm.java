@@ -1,7 +1,6 @@
 package jun.moviecommunity.controller;
 
 import lombok.Data;
-
 import javax.validation.constraints.NotEmpty;
 
 @Data
