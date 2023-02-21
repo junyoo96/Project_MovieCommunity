@@ -32,7 +32,7 @@ public class Post extends BaseTimeEntity{
     private int likeCount;
 
     //Post가 삭제될 때 관련된 File도 모두 삭제하기 위해 CascadeType.ALL로 설정
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<File> files = new ArrayList<>();
 
     /**

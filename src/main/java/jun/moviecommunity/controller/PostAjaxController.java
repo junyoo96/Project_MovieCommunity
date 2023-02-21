@@ -31,12 +31,15 @@ public class PostAjaxController {
 
         Page<PostDto> pagingList = null;
 
-        if ((searchKeyword == null || searchKeyword.equals("null")) && category == null) {
-            pagingList = postService.findPosts(pageable);
-        }
-        else {
-            pagingList = postService.findPostsByCriteria(new PostSearchCondition(searchKeyword, category), pageable);
-        }
+        //일단 놔두기
+//        if ((searchKeyword == null || searchKeyword.equals("null")) && category == null) {
+//            pagingList = postService.findPosts(pageable);
+//        }
+//        else {
+//            pagingList = postService.findPostsByCriteria(new PostSearchCondition(searchKeyword, category), pageable);
+//        }
+
+        pagingList = postService.findPostsByCriteria(new PostSearchCondition(searchKeyword, category), pageable);
 
         String sortValue = pagingList.getSort().toString().replace(": ", ",");
 

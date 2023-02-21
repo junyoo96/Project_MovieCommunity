@@ -45,11 +45,18 @@ public class PostService {
         return post.getId();
     }
 
+//    /**
+//     * 게시글 전체 조회
+//    **/
+//    public Page<PostDto> findPosts(Pageable pageable) {
+//        return postCustomRepository.findAll(pageable).map(PostDto::new);
+//    }
+
     /**
-     * 게시글 전체 조회
+     * 게시글 조회
     **/
-    public Page<PostDto> findPosts(Pageable pageable) {
-        return postRepository.findAll(pageable).map(PostDto::new);
+    public Page<PostDto> findPostsByCriteria(PostSearchCondition postSearchCondition, Pageable pageable) {
+        return postCustomRepository.findAllByCriteria(postSearchCondition, pageable).map(PostDto::new);
     }
 
     /**
@@ -118,9 +125,5 @@ public class PostService {
         SmartEditor smartEditor = new SmartEditor(fileUrl, fileName, "true");
 
         return smartEditor;
-    }
-
-    public Page<PostDto> findPostsByCriteria(PostSearchCondition postSearchCondition, Pageable pageable) {
-        return postCustomRepository.findAllByCriteria(postSearchCondition, pageable).map(PostDto::new);
     }
 }
