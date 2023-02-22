@@ -79,7 +79,6 @@ public class CommentAjaxController {
 
         //댓글 수정
         commentService.updateComment(id, request.getContent());
-        Comment findComment = commentService.findOne(id);
         return ResponseEntity.ok(HttpStatus.OK);
     }
 

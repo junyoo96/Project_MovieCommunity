@@ -50,7 +50,6 @@ public class CommentService {
         return commentCustomRepository.findAllByPostId(postId);
     }
 
-
     /**
      * 유저별 댓글 조회
     **/
@@ -64,7 +63,12 @@ public class CommentService {
     @Transactional
     public Comment updateComment(Long commentId, String content) {
         Comment comment = commentRepository.findById(commentId).get();
-        comment.update(content);
+
+        //삭제된 댓글이 아닌지 확인
+        if (comment.getIsDeleted() == Comment.Status.REMAIN) {
+            comment.update(content);
+        }
+
         return comment;
     }
 
@@ -72,7 +76,31 @@ public class CommentService {
      * 댓글 삭제
     **/
     @Transactional
-    public void deleteComment(Long commentId) {commentRepository.deleteById(commentId); }
+    public void deleteComment(Long commentId) {
+        Comment comment = commentRepository.findById(commentId).get();
+        //만약 대댓글이 있다면
+        if(comment.getChildren().size() != 0) {
+            comment.updateDeletedStatus(Comment.Status.DELETED);
+            comment.update("삭제된 댓글입니다.");
+        }
+        else {
+            commentRepository.delete(getDeletableAncestorComment(comment));
+        }
+    }
+
+    /**
+     * 삭제 가능한 조상 댓글을 구하는 함수
+    **/
+    private Comment getDeletableAncestorComment(Comment comment) {
+        // 현재 댓글의 부모를 구함
+        Comment parent = comment.getParent();
+        // 부모가 있고, 부모의 자식이 1개(지금 삭제하는 댓글)이고, 부모의 삭제 상태가 TRUE인 댓글이라면 재귀
+        if(parent != null && parent.getChildren().size() == 1 && parent.getIsDeleted() == Comment.Status.DELETED) {
+            return getDeletableAncestorComment(parent);
+        }
+        // 삭제해야하는 댓글 반환
+        return comment;
+    }
 
     /**
      * 댓글 좋아요
@@ -80,7 +108,9 @@ public class CommentService {
     @Transactional
     public void like(Long commentId) {
         Comment comment = commentRepository.findById(commentId).get();
-        comment.increaseLikeCount();
+        if (comment.getIsDeleted() == Comment.Status.REMAIN) {
+            comment.increaseLikeCount();
+        }
     }
 
     /**

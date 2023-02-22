@@ -159,10 +159,9 @@ function getCommentList() {
 
 
             var comment_html = "<div class='comment-list'>";
+            $('#count').html(count + " 댓글");
 
             if(count > 0){
-                $('#count').html(count + " 댓글");
-
                 $.each(comments, function(index, item) {
                     comment_html += getComment(index, item);
                     comment_html += "<br>"
