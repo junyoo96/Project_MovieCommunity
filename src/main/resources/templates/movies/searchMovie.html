@@ -23,11 +23,11 @@
             <div>
                 <div class="form-group">
                     <div class="input-group mb-3">
-                        <input type="text" id="searchKeyword" name="searchKeyword" class="form-control" placeholder='영화 제목 또는 댓글로 검색'
+                        <input type="text" id="searchKeyword" name="searchKeyword" class="form-control" placeholder='영화 제목 또는 내용으로 검색'
                                onfocus="this.placeholder = ''"
                                onblur="this.placeholder = '영화 제목 또는 내용으로 검색'">
                         <div class="input-group-append">
-                            <a th:attr="onclick=|getPostList()|" type="submit"><i class="ti-search"></i></a>
+                            <a th:attr="onclick=|getMovieList()|" type="submit"><i class="ti-search"></i></a>
                         </div>
                     </div>
                 </div>
@@ -89,7 +89,7 @@
 <div th:replace="fragments/footer :: footer"/>
 <script th:inline="javascript">
     //게시물 불러오기
-    function getPostList() {
+    function getMovieList() {
         const keyword = $('#searchKeyword').val();
         const url = "/api/movies?keyword=" + keyword;
 
@@ -99,37 +99,37 @@
             contentType: 'application/json',
             success:function(data) {
 
-                var post_html = "";
+                var movie_html = "";
                 // var paging = data.paging;
-                var post_list = data.items;
+                var movie_list = data.items;
                 var count = data.display;
 
                 if(count > 0) {
-                    $.each(post_list, function (index, item) {
+                    $.each(movie_list, function (index, item) {
 
                         if(index == 0) {
-                            post_html += "<div class='row'>"
+                            movie_html += "<div class='row'>"
                         }
 
-                        post_html += getPost(index, item);
+                        movie_html += getMovie(index, item);
 
                         if((index + 1) % 3 == 0) {
-                            post_html += "</div>"
-                            post_html += "<div class='row'>"
+                            movie_html += "</div>"
+                            movie_html += "<div class='row'>"
                         }
 
                     });
 
-                    post_html += "</div>"
+                    movie_html += "</div>"
 
                     //post_html += getPaging(data);
 
                 }
                 else {
-                    post_html = "<div>검색된 영화가 없습니다.</div>";
+                    movie_html = "<div>검색된 영화가 없습니다.</div>";
                 }
 
-                $(".movies-area").html(post_html);
+                $(".movies-area").html(movie_html);
 
 
             },
@@ -139,8 +139,8 @@
         });
     }
 
-    function getPost(index, item) {
-        var post_html = "";
+    function getMovie(index, item) {
+        var movie_html = "";
 
         if (item != null) {
 
@@ -161,118 +161,118 @@
 
             //사진영역
             // post_html += "<div class='col-lg-4 col-sm-6'>";
-            post_html += "<div class='col-4'>";
+            movie_html += "<div class='col-4'>";
 
-            post_html += "<article class='blog_item'>";
+            movie_html += "<article class='blog_item'>";
             //사진영역
-            post_html += "<div class='blog_item_img'>";
-            post_html += "<img class='card-img rounded-0' style='height:400px;' src='" + image_path + "' alt=''>";
-            post_html += "<a href='#' class='blog_item_date'>";
-            post_html += "<h3>" + title + "</h3>";
-            post_html += "<p>" + pubDate + "</p>";
-            post_html += "</a>"
-            post_html += "</div>"
+            movie_html += "<div class='blog_item_img'>";
+            movie_html += "<img class='card-img rounded-0' style='height:400px;' src='" + image_path + "' alt=''>";
+            movie_html += "<a href='#' class='blog_item_date'>";
+            movie_html += "<h3>" + title + "</h3>";
+            movie_html += "<p>" + pubDate + "</p>";
+            movie_html += "</a>"
+            movie_html += "</div>"
 
             //세부영역
-            post_html += "<div class='blog_details'>";
+            movie_html += "<div class='blog_details'>";
             // post_html += "<a class='d-inline-block' href='/posts/" + post_id  + "'>";
-            post_html += "<h2>" + subtitle + "</h2>";
-            post_html += ""
-            post_html += "</a>";
-            post_html += "<ul class='blog-info-link'>"
-            post_html += "<li><a><i class='far fa-user'>감독 :" + director + "</i></a></li>"
-            post_html += "</ul>";
-            post_html += "<ul class='blog-info-link'>"
-            post_html += "<li><a><i class='far fa-user'>배우 : " + actor + "</i></a></li>"
-            post_html += "</ul>";
-            post_html += "<ul class='blog-info-link'>"
-            post_html += "<li><a><i class='far fa-star'>평점 : " + userRating + "</i></a></li>"
-            post_html += "</ul>";
-            post_html += "</div>";
+            movie_html += "<h2>" + subtitle + "</h2>";
+            movie_html += ""
+            movie_html += "</a>";
+            movie_html += "<ul class='blog-info-link'>"
+            movie_html += "<li><a><i class='far fa-user'>감독 :" + director + "</i></a></li>"
+            movie_html += "</ul>";
+            movie_html += "<ul class='blog-info-link'>"
+            movie_html += "<li><a><i class='far fa-user'>배우 : " + actor + "</i></a></li>"
+            movie_html += "</ul>";
+            movie_html += "<ul class='blog-info-link'>"
+            movie_html += "<li><a><i class='far fa-star'>평점 : " + userRating + "</i></a></li>"
+            movie_html += "</ul>";
+            movie_html += "</div>";
 
-            post_html += "</article>";
+            movie_html += "</article>";
 
-            post_html += "</div>";
-
-        }
-
-        return post_html;
-    }
-
-    function getPaging(data) {
-        var paging_html = "";
-        var paging = data.paging;
-        var searchKeyword = data.searchKeyword;
-
-        if (searchKeyword == undefined) {
-            searchKeyword = null;
-        }
-
-        //페이징 영역 시작
-        if (!data.empty) {
-
-            var paging_number = paging.number;
-            var paging_size = paging.size;
-            var total_pages = paging.totalPages;
-            console.log("몇번째", paging_number, paging_size);
-
-            paging_html += "<nav class='blog-pagination justify-content-center d-flex'>";
-            paging_html += "<ul class='pagination justify-content-center'>";
-
-            //이전버튼
-            if (paging_number != 0) {
-                paging_html += "<li class='page-item'>";
-                var criteria = "?page=" + (paging_number - 1);
-                paging_html += "<a class='page-link' onclick='getPostList(" + "\"" + criteria + "\"" + ")'" + ">";
-                paging_html += "<span>이전</span>";
-                paging_html += "</a>";
-            }
-
-            //페이지 넘버링
-            for (var i = 0; i < total_pages; i++) {
-                var criteria = "?page=" + i;
-                paging_html += "<li><a class='page-link' onclick='getPostList(" + "\"" + criteria + "\"" + ")'" + ">" + (i + 1) + "</a></li>";
-            }
-
-            //다음버튼
-            if (paging_number != total_pages - 1) {
-                paging_html += "<li class='page-item'>";
-                var criteria = "?page=" + (paging_number + 1);
-                paging_html += "<a class='page-link' onclick='getPostList(" + "\"" + criteria + "\"" + ")'" + ">";
-                paging_html += "<span>다음</span>";
-                paging_html += "</a>";
-            }
-
-            paging_html += "</ul>";
-            paging_html += "</nav>";
+            movie_html += "</div>";
 
         }
 
-
-        return paging_html;
+        return movie_html;
     }
 
-    //게시물 좋아요
-    function likePost(post_id) {
-        $.ajax({
-            type:'PUT',
-            url:"/posts/" + post_id + "/like",
-            contentType: 'application/json',
-            success:function(data){
-                if(data === 'OK') {
-                    console.log('게시물 좋아요 완료');
-                } else {
-                    alert('로그인 이후 이용해주시기 바랍니다.');
-                    console.log('게시물 좋아요 실패');
-                }
+    // function getPaging(data) {
+    //     var paging_html = "";
+    //     var paging = data.paging;
+    //     var searchKeyword = data.searchKeyword;
+    //
+    //     if (searchKeyword == undefined) {
+    //         searchKeyword = null;
+    //     }
+    //
+    //     //페이징 영역 시작
+    //     if (!data.empty) {
+    //
+    //         var paging_number = paging.number;
+    //         var paging_size = paging.size;
+    //         var total_pages = paging.totalPages;
+    //         console.log("몇번째", paging_number, paging_size);
+    //
+    //         paging_html += "<nav class='blog-pagination justify-content-center d-flex'>";
+    //         paging_html += "<ul class='pagination justify-content-center'>";
+    //
+    //         //이전버튼
+    //         if (paging_number != 0) {
+    //             paging_html += "<li class='page-item'>";
+    //             var criteria = "?page=" + (paging_number - 1);
+    //             paging_html += "<a class='page-link' onclick='getPostList(" + "\"" + criteria + "\"" + ")'" + ">";
+    //             paging_html += "<span>이전</span>";
+    //             paging_html += "</a>";
+    //         }
+    //
+    //         //페이지 넘버링
+    //         for (var i = 0; i < total_pages; i++) {
+    //             var criteria = "?page=" + i;
+    //             paging_html += "<li><a class='page-link' onclick='getPostList(" + "\"" + criteria + "\"" + ")'" + ">" + (i + 1) + "</a></li>";
+    //         }
+    //
+    //         //다음버튼
+    //         if (paging_number != total_pages - 1) {
+    //             paging_html += "<li class='page-item'>";
+    //             var criteria = "?page=" + (paging_number + 1);
+    //             paging_html += "<a class='page-link' onclick='getPostList(" + "\"" + criteria + "\"" + ")'" + ">";
+    //             paging_html += "<span>다음</span>";
+    //             paging_html += "</a>";
+    //         }
+    //
+    //         paging_html += "</ul>";
+    //         paging_html += "</nav>";
+    //
+    //     }
+    //
+    //
+    //     return paging_html;
+    // }
 
-                getPostList();
-            },
-            error:function(){
-                alert('통신실패');
-            }
-        });
-    }
+    // //게시물 좋아요
+    // function likePost(post_id) {
+    //     $.ajax({
+    //         type:'PUT',
+    //         url:"/posts/" + post_id + "/like",
+    //         contentType: 'application/json',
+    //         success:function(data){
+    //             if(data === 'OK') {
+    //                 console.log('게시물 좋아요 완료');
+    //             } else {
+    //                 alert('로그인 이후 이용해주시기 바랍니다.');
+    //                 console.log('게시물 좋아요 실패');
+    //             }
+    //
+    //             getPostList();
+    //         },
+    //         error:function(){
+    //             alert('통신실패');
+    //         }
+    //     });
+    // }
 
     //url에서 파라미터만을 가져옴
     // var url_parameters = window.location.search;
