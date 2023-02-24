@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header">
+    <title>게시판페이지</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+<div th:replace="fragments/bodyHeader :: bodyHeader"/>
+<!--================Blog Area =================-->
+<section class="blog_area section_padding">
+
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-xl-6">
+                <div class="section_tittle text-center">
+                    <h2>영화 검색</h2>
+<!--                    <p>Waters make fish every without firmament saw had. Morning air subdue. Our. Air very one. Whales grass is fish whales winged.</p>-->
+                </div>
+            </div>
+        </div>
+<!--                검색 영역 -->
+            <div>
+                <div class="form-group">
+                    <div class="input-group mb-3">
+                        <input type="text" id="searchKeyword" name="searchKeyword" class="form-control" placeholder='영화 제목 또는 댓글로 검색'
+                               onfocus="this.placeholder = ''"
+                               onblur="this.placeholder = '영화 제목 또는 내용으로 검색'">
+                        <div class="input-group-append">
+                            <a th:attr="onclick=|getPostList()|" type="submit"><i class="ti-search"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+<!--            <div class="row">-->
+<!--                <div class="col-6"  th:align="left">-->
+<!--                    <a th:if="${session.loginUser != null}" href="/posts/new" class="button button-contactForm btn_1">게시물 작성</a>-->
+<!--                </div>-->
+<!--&lt;!&ndash;                정렬 영역 &ndash;&gt;-->
+<!--                <div class="col-6"  th:align="right">-->
+<!--                    <span>-->
+<!--                    <button class="btn btn dropdown-toggle border" type="submit" id="dropdownMenuButtonCategory" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">-->
+<!--                        카테고리 선택-->
+<!--                    </button>-->
+<!--                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButtonCategory">-->
+<!--                        <a class="dropdown-item" th:attr="onclick=|getPostList('?category=', this)|" th:text="전체"/>-->
+<!--                        <th:block th:each="category : ${categories}">-->
+<!--                            <a class="dropdown-item" th:attr="onclick=|getPostList('?category=*{category}', this)|" th:text="*{category}"/>-->
+<!--                        </th:block>-->
+<!--                    </div>-->
+<!--                </span>-->
+<!--                    <span>-->
+<!--                    <button class="btn btn dropdown-toggle border" type="submit" id="dropdownMenuButtonPagingSize" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">-->
+<!--                        5개-->
+<!--                    </button>-->
+<!--                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButtonPagingSize">-->
+<!--                        <a class="dropdown-item" th:onclick="getPostList('?size=5', this)">5개</a>-->
+<!--                        <a class="dropdown-item" th:onclick="getPostList('?size=10', this)">10개</a>-->
+<!--                        <a class="dropdown-item" th:onclick="getPostList('?size=30', this)">30개</a>-->
+<!--                    </div>-->
+<!--                </span>-->
+<!--                    <span th:align="right">-->
+<!--                    <button class="btn btn dropdown-toggle border" type="submit" id="dropdownMenuButtonSort" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">-->
+<!--                        최신순-->
+<!--                    </button>-->
+<!--                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButtonSort">-->
+<!--                        <a class="dropdown-item" th:onclick="getPostList('?sort=createDate,desc&page=0', this)">최신순</a>-->
+<!--                        <a class="dropdown-item" th:onclick="getPostList('?sort=viewCount,desc&page=0', this)">조회순</a>-->
+<!--                        <a class="dropdown-item" th:onclick="getPostList('?sort=likeCount,desc&page=0', this)">좋아요순</a>-->
+<!--                    </div>-->
+<!--                </span>-->
+<!--                </div>-->
+
+<!--            </div>-->
+        <hr>
+
+<!-- 영화 영역 시작 -->
+        <section class="hotel_list section_padding single_page_hotel_list">
+            <div class="container">
+            <div class="movies-area"></div>
+            </div>
+        </section>
+<!-- 영화 영역 끝 -->
+
+<!--        끝-->
+    </div>
+</section>
+<div th:replace="fragments/footer :: footer"/>
+<script th:inline="javascript">
+    //게시물 불러오기
+    function getPostList() {
+        const keyword = $('#searchKeyword').val();
+        const url = "/api/movies?keyword=" + keyword;
+
+        $.ajax({
+            type:'GET',
+            url:url,
+            contentType: 'application/json',
+            success:function(data) {
+
+                var post_html = "";
+                // var paging = data.paging;
+                var post_list = data.items;
+                var count = data.display;
+
+                if(count > 0) {
+                    $.each(post_list, function (index, item) {
+
+                        if(index == 0) {
+                            post_html += "<div class='row'>"
+                        }
+
+                        post_html += getPost(index, item);
+
+                        if((index + 1) % 3 == 0) {
+                            post_html += "</div>"
+                            post_html += "<div class='row'>"
+                        }
+
+                    });
+
+                    post_html += "</div>"
+
+                    //post_html += getPaging(data);
+
+                }
+                else {
+                    post_html = "<div>검색된 영화가 없습니다.</div>";
+                }
+
+                $(".movies-area").html(post_html);
+
+
+            },
+            error:function(){
+                alert('통신실패');
+            }
+        });
+    }
+
+    function getPost(index, item) {
+        var post_html = "";
+
+        if (item != null) {
+
+            var image_path = item.image;
+            var title = item.title;
+            var subtitle = item.subtitle;
+            var pubDate = item.pubDate;
+            var director = item.director;
+            var actor = item.actor;
+            var userRating = item.userRating;
+
+            //불필요한 문자 제거
+            var director = director.replace('|', '');
+            var title = title.replace('<b>', '');
+            var title = title.replace('</b>', '');
+            //날짜 처리
+            var pubDate = pubDate.substr(0, 10);
+
+            //사진영역
+            // post_html += "<div class='col-lg-4 col-sm-6'>";
+            post_html += "<div class='col-4'>";
+
+            post_html += "<article class='blog_item'>";
+            //사진영역
+            post_html += "<div class='blog_item_img'>";
+            post_html += "<img class='card-img rounded-0' style='height:400px;' src='" + image_path + "' alt=''>";
+            post_html += "<a href='#' class='blog_item_date'>";
+            post_html += "<h3>" + title + "</h3>";
+            post_html += "<p>" + pubDate + "</p>";
+            post_html += "</a>"
+            post_html += "</div>"
+
+            //세부영역
+            post_html += "<div class='blog_details'>";
+            // post_html += "<a class='d-inline-block' href='/posts/" + post_id  + "'>";
+            post_html += "<h2>" + subtitle + "</h2>";
+            post_html += ""
+            post_html += "</a>";
+            post_html += "<ul class='blog-info-link'>"
+            post_html += "<li><a><i class='far fa-user'>감독 :" + director + "</i></a></li>"
+            post_html += "</ul>";
+            post_html += "<ul class='blog-info-link'>"
+            post_html += "<li><a><i class='far fa-user'>배우 : " + actor + "</i></a></li>"
+            post_html += "</ul>";
+            post_html += "<ul class='blog-info-link'>"
+            post_html += "<li><a><i class='far fa-star'>평점 : " + userRating + "</i></a></li>"
+            post_html += "</ul>";
+            post_html += "</div>";
+
+            post_html += "</article>";
+
+            post_html += "</div>";
+
+        }
+
+        return post_html;
+    }
+
+    function getPaging(data) {
+        var paging_html = "";
+        var paging = data.paging;
+        var searchKeyword = data.searchKeyword;
+
+        if (searchKeyword == undefined) {
+            searchKeyword = null;
+        }
+
+        //페이징 영역 시작
+        if (!data.empty) {
+
+            var paging_number = paging.number;
+            var paging_size = paging.size;
+            var total_pages = paging.totalPages;
+            console.log("몇번째", paging_number, paging_size);
+
+            paging_html += "<nav class='blog-pagination justify-content-center d-flex'>";
+            paging_html += "<ul class='pagination justify-content-center'>";
+
+            //이전버튼
+            if (paging_number != 0) {
+                paging_html += "<li class='page-item'>";
+                var criteria = "?page=" + (paging_number - 1);
+                paging_html += "<a class='page-link' onclick='getPostList(" + "\"" + criteria + "\"" + ")'" + ">";
+                paging_html += "<span>이전</span>";
+                paging_html += "</a>";
+            }
+
+            //페이지 넘버링
+            for (var i = 0; i < total_pages; i++) {
+                var criteria = "?page=" + i;
+                paging_html += "<li><a class='page-link' onclick='getPostList(" + "\"" + criteria + "\"" + ")'" + ">" + (i + 1) + "</a></li>";
+            }
+
+            //다음버튼
+            if (paging_number != total_pages - 1) {
+                paging_html += "<li class='page-item'>";
+                var criteria = "?page=" + (paging_number + 1);
+                paging_html += "<a class='page-link' onclick='getPostList(" + "\"" + criteria + "\"" + ")'" + ">";
+                paging_html += "<span>다음</span>";
+                paging_html += "</a>";
+            }
+
+            paging_html += "</ul>";
+            paging_html += "</nav>";
+
+        }
+
+
+        return paging_html;
+    }
+
+    //게시물 좋아요
+    function likePost(post_id) {
+        $.ajax({
+            type:'PUT',
+            url:"/posts/" + post_id + "/like",
+            contentType: 'application/json',
+            success:function(data){
+                if(data === 'OK') {
+                    console.log('게시물 좋아요 완료');
+                } else {
+                    alert('로그인 이후 이용해주시기 바랍니다.');
+                    console.log('게시물 좋아요 실패');
+                }
+
+                getPostList();
+            },
+            error:function(){
+                alert('통신실패');
+            }
+        });
+    }
+
+    //url에서 파라미터만을 가져옴
+    // var url_parameters = window.location.search;
+    // getPostList(url_parameters);
+
+</script>
+</body>
+</html>
